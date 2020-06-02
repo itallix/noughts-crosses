@@ -15,7 +15,7 @@ import io.karniushin.tictactoe.core.service.handler.rule.condition.*;
 public class DefaultEndGameRule implements GameRule {
 
     private final List<WinCondition> conditions = Arrays.asList(
-            new HorizontalWinCondition(),  new VerticalWinCondition(), new PrincipalWinCondition(), new SecondaryWinCondition()
+            new HorizontalWin(),  new VerticalWin(), new PrincipalWin(), new SecondaryWin()
     );
 
     @Override
