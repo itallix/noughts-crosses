@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'com.github.node-gradle.node' version '2.2.4'
+}
+
+node {
+    version = '12.12.0'
+    yarnVersion = '1.19.1'
+    download = true
+}
+
+// make yarn work incrementally
+tasks['yarn'].configure {
+    inputs.file(file("${projectDir}/package.json"))
+    outputs.dir(file("${projectDir}/node_modules"))
+    outputs.file(file("${projectDir}/yarn.lock"))
+}
+
+task eslint(type: YarnTask, dependsOn: ':yarn') {
+    args = ["gulp", "eslint", "--quiet=true"]
+}
+
+jar {
+    from(fileTree('build')) {
+        exclude('libs')
+        exclude('tmp')
+        into 'META-INF/resources'
+    }
+}
+
+jar.dependsOn('yarn_run_build')
+
+idea {
+    module {
+        excludeDirs = [file("node_modules")]
+    }
+}
+

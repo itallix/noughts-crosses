@@ -1,0 +1,33 @@
+= Load games
+
+== Loading list of the games
+
+You can list all the registered games.
+
+include::{snippets}/load/list/http-request.adoc[]
+include::{snippets}/load/list/curl-request.adoc[]
+include::{snippets}/load/list/httpie-request.adoc[]
+
+You receive a response:
+
+include::{snippets}/load/list/http-response.adoc[]
+
+Response fields explained:
+
+include::{snippets}/load/list/response-fields.adoc[]
+
+== Loading game state by id
+
+You can load the state of the game by id.
+
+include::{snippets}/load/get/http-request.adoc[]
+include::{snippets}/load/get/curl-request.adoc[]
+include::{snippets}/load/get/httpie-request.adoc[]
+
+You receive a response:
+
+include::{snippets}/load/get/http-response.adoc[]
+
+Response fields explained:
+
+include::{snippets}/load/get/response-fields.adoc[]

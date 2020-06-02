@@ -1,0 +1,5 @@
+400:: Sending incorrect parameters or values will return a `Bad Request` response.
+
+404:: Sending request for non-existing entity will result in a `Not Found` response.
+
+500:: If the server can't process your request, an `Internal Server Error` will be returned.

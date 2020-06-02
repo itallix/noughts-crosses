@@ -1,0 +1,17 @@
+= New game
+
+You can create a new game if you provide a username.
+
+To create a new game with specified owner, send this request:
+
+include::{snippets}/create/http-request.adoc[]
+include::{snippets}/create/curl-request.adoc[]
+include::{snippets}/create/httpie-request.adoc[]
+
+You receive a response:
+
+include::{snippets}/create/http-response.adoc[]
+
+Response fields explained:
+
+include::{snippets}/create/response-fields.adoc[]
