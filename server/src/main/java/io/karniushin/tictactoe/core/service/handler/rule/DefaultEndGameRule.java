@@ -2,12 +2,12 @@ package io.karniushin.tictactoe.core.service.handler.rule;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import io.karniushin.tictactoe.core.domain.GameSession;
-import io.karniushin.tictactoe.core.domain.WinResult;
 import io.karniushin.tictactoe.core.service.handler.rule.condition.*;
 
 @Component
@@ -25,13 +25,12 @@ public class DefaultEndGameRule implements GameRule {
         // check should be made after some amount of turns
         if (isOwner && session.getOwnerTurnCount() >= threshold || !isOwner && session.getOpponentTurnCount() >= threshold) {
             CheckParams params = new CheckParams(session.getBoard(), isOwner ? (short) 1 : -1, x, y, session.getThreshold());
-            for (WinCondition condition : conditions) {
-                WinResult result = condition.check(params);
-                if (result != null) {
-                    session.setWin(result);
-                    break;
-                }
-            }
+            conditions.stream()
+                    .map(c -> c.check(params))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .findFirst()
+                    .ifPresent(session::setWin);
         }
     }
 }

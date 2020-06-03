@@ -3,6 +3,7 @@ package io.karniushin.tictactoe.core.service.handler.rule.condition;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import io.karniushin.tictactoe.core.domain.WinResult;
 
@@ -10,7 +11,7 @@ public abstract class WinCondition {
 
     protected WinResult.WinResultType type;
 
-    public WinResult check(final CheckParams params) {
+    public Optional<WinResult> check(final CheckParams params) {
         final short search = params.getSearch();
         final int threshold = params.getThreshold();
         List<WinResult.Coords> winningLine = new ArrayList<>();
@@ -20,17 +21,17 @@ public abstract class WinCondition {
         while (before.hasNext()) {
             winningLine.add(0, before.next());
             if (winningLine.size() == threshold) {
-                return new WinResult(type, search, winningLine);
+                return Optional.of(new WinResult(type, search, winningLine));
             }
         }
         NeighbourDetector after = after(params);
         while (after.hasNext()) {
             winningLine.add(after.next());
             if (winningLine.size() == threshold) {
-                return new WinResult(type, search, winningLine);
+                return Optional.of(new WinResult(type, search, winningLine));
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     protected abstract NeighbourDetector before(CheckParams params);
