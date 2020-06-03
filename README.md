@@ -1,5 +1,10 @@
 # TicTacToe Game 10x10 with configurable win threshold
 
+[![Build Status][noughts-crosses-travis-image] ][noughts-crosses-travis-url]
+
+[noughts-crosses-travis-image]: https://travis-ci.com/itallix/noughts-crosses.svg?token=VccNzTqqao1HL7VwvVz1&branch=master
+[noughts-crosses-travis-url]: https://travis-ci.com/github/itallix/noughts-crosses
+
 ## Run project:
 
 Server configured to run on port `8081` by default.
