@@ -22,9 +22,20 @@ export default class GameBoardComponent extends Component {
         win: WinResult
     };
 
-    handleTurn = (row, col) => {
-        this.props.onTurn(row, col)
-    };
+    renderWaitingBlock() {
+        const {playerName, gameId, onRefresh} = this.props;
+
+        return (<Result
+            status="success"
+            title={`Hi ${playerName}! You've just successfully created the new game`}
+            subTitle={`Game id: ${gameId}. Please wait for opponent to join the game.`}
+            extra={[
+                <Button type="primary" key="refresh" onClick={onRefresh}>
+                    Refresh
+                </Button>
+            ]}
+        />);
+    }
 
     renderGameOver() {
         const {isOwner, win} = this.props;
@@ -49,39 +60,70 @@ export default class GameBoardComponent extends Component {
         </React.Fragment>)
     }
 
+    renderTurnHint() {
+        const { shouldWait, onRefresh } = this.props;
+
+        return (<React.Fragment>
+            {!shouldWait && <Alert
+                message="Make a turn"
+                description="Please feel free to make a turn."
+                type="info"
+                showIcon
+            />}
+            {shouldWait && <Alert
+                message="Waiting for another turn"
+                description="Wait until your opponent will make a turn."
+                type="warning"
+                showIcon/>
+            }
+            <Button className='refresh-btn' type='dashed' onClick={onRefresh}>Refresh</Button>
+        </React.Fragment>);
+    }
+
+    renderBoard() {
+        const {board, isOwner, onTurn, status, shouldWait, win} = this.props;
+
+        const isWinnerCell = (seq, r, c) => seq.find(p => p.x === r && p.y === c);
+
+        return (<React.Fragment>
+            {board.map((row, rdx) => (
+                <Row key={rdx} gutter={[3, 3]}>
+                    {row.map((num, idx) => {
+                        const cellClasses = classNames('cell', {
+                            'active': !shouldWait && row[idx] === 0 && isInProgress(status),
+                            'winner': isFinished(status) && (isOwner && win.who === 1 || !isOwner && win.who === - 1) &&
+                                isWinnerCell(win.seq, rdx, idx),
+                            'looser': isFinished(status) && (isOwner && win.who === -1 || !isOwner && win.who === 1) &&
+                                isWinnerCell(win.seq, rdx, idx)
+                        })
+                        return (<Col key={idx} span={2}>
+                            <div className={cellClasses}
+                                 style={{opacity: isOwner && row[idx] === 1 || !isOwner && row[idx] === -1 ? 0.8 : 0.4}}
+                                 onClick={() => {
+                                     if (!shouldWait && row[idx] === 0 && isInProgress(status)) {
+                                         onTurn(rdx, idx)
+                                     }
+                                 }}>
+                                {row[idx] === 1 && <CloseOutlined className='owner'/>}
+                                {row[idx] === -1 && <CheckCircleOutlined className='opponent'/>}
+                            </div>
+                        </Col>)
+                    })}
+                </Row>)
+            )}
+        </React.Fragment>);
+    }
+
     render() {
-        const {board, gameId, isOwner, onRefresh, playerName, shouldWait, status, win} = this.props;
+        const {playerName, shouldWait, status} = this.props;
 
         return <div className='game-board'>
             <Alert message={`Hi ${playerName}!`} type="success" />
-            {isWaiting(status) && <Result
-                status="success"
-                title={`Hi ${playerName}! You've just successfully created the new game`}
-                subTitle={`Game id: ${gameId}. Please wait for opponent to join the game.`}
-                extra={[
-                    <Button type="primary" key="refresh" onClick={onRefresh}>
-                        Refresh
-                    </Button>
-                ]}
-            />}
+            {isWaiting(status) && this.renderWaitingBlock()}
             {isFinished(status) && this.renderGameOver()}
             {!isWaiting(status) && <React.Fragment>
                 <Divider />
-                {isInProgress(status) && <React.Fragment>
-                    {!shouldWait && <Alert
-                        message="Make a turn"
-                        description="Please feel free to make a turn."
-                        type="info"
-                        showIcon
-                    />}
-                    {shouldWait && <Alert
-                        message="Waiting for another turn"
-                        description="Wait until your opponent will make a turn."
-                        type="warning"
-                        showIcon/>
-                    }
-                </React.Fragment>}
-                {!isFinished(status) && <Button className='refresh-btn' type='dashed' onClick={onRefresh}>Refresh</Button>}
+                {isInProgress(status) && this.renderTurnHint()}
                 <Spin tip="Waiting..." size="large" spinning={isInProgress(status) && shouldWait}>
                     <div className='wrapper'>
                         <Row gutter={[16, 16]}>
@@ -89,31 +131,7 @@ export default class GameBoardComponent extends Component {
                                 <img className='hero sc' src={'sc.png'} />
                             </Col>
                             <Col span={18}>
-                                {board.map((row, rdx) => (
-                                        <Row key={rdx} gutter={[3, 3]}>
-                                            {row.map((num, idx) => {
-                                                const cellClasses = classNames('cell', {
-                                                    'active': !shouldWait && row[idx] === 0 && isInProgress(status),
-                                                    'winner': win && (isOwner && win.who === 1 || !isOwner && win.who === - 1) &&
-                                                        isFinished(status) && win.seq.find(c => c.x === rdx && c.y === idx),
-                                                    'looser': win && (isOwner && win.who === -1 || !isOwner && win.who === 1) &&
-                                                        isFinished(status) && win.seq.find(c => c.x === rdx && c.y === idx)
-                                                })
-                                                return (<Col key={idx} span={2}>
-                                                    <div className={cellClasses}
-                                                         style={{opacity: isOwner && row[idx] === 1 || !isOwner && row[idx] === -1 ? 0.8 : 0.4}}
-                                                         onClick={() => {
-                                                             if (!shouldWait && row[idx] === 0 && isInProgress(status)) {
-                                                                 this.handleTurn(rdx, idx)
-                                                             }
-                                                         }}>
-                                                        {row[idx] === 1 && <CloseOutlined className='owner'/>}
-                                                        {row[idx] === -1 && <CheckCircleOutlined className='opponent'/>}
-                                                    </div>
-                                                </Col>)
-                                            })}
-                                        </Row>)
-                                )}
+                                {this.renderBoard()}
                             </Col>
                             <Col span={3} style={{marginLeft: '-30px'}}>
                                 <img className='hero sz' src={'sz.png'} />
