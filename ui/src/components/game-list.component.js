@@ -258,9 +258,7 @@ export default class GameListComponent extends Component {
                                 <List.Item actions={actions}>
                                     <Skeleton avatar title={false} loading={item.loading} active>
                                         <List.Item.Meta
-                                            avatar={
-                                                <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>
-                                            }
+                                            avatar={<Avatar src="mk.png"/>}
                                             title={title}
                                             description={getDescriptionByStatus(item.status)}
                                         />
