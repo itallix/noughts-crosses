@@ -11,57 +11,40 @@ public class HorizontalWin extends WinCondition {
     }
 
     @Override
-    protected NeighbourDetector before(final int x, final int y, final short[][] board, final short search) {
-        return new Before(x, y, board, search);
+    protected NeighbourDetector before(CheckParams params) {
+        return new NeighbourDetector(params.getBoard(), params.getSearch()) {
+
+            final int x = params.getX();
+            int i = params.getY() - 1;
+
+            @Override
+            public boolean hasNext() {
+                return x >= 0 && i >= 0 && matches(x, i);
+            }
+
+            @Override
+            public WinResult.Coords next() {
+                return new WinResult.Coords(x, i--);
+            }
+        };
     }
 
     @Override
-    protected NeighbourDetector after(final int x, final int y, final short[][] board, final short search) {
-        return new After(x, y, board, search);
-    }
+    protected NeighbourDetector after(CheckParams params) {
+        return new NeighbourDetector(params.getBoard(), params.getSearch()) {
 
+            final int x = params.getX();
+            int i = params.getY() + 1;
 
-    private static class Before extends NeighbourDetector {
+            @Override
+            public boolean hasNext() {
+                return x < BOARD_DIMENSION && i < BOARD_DIMENSION && matches(x, i);
+            }
 
-        private final int x;
-        private int i;
-
-        public Before(int x, int y, short[][] board, short search) {
-            super(board, search);
-            this.x = x;
-            this.i = y - 1;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return x >= 0 && i >= 0 && board[x][i] == search;
-        }
-
-        @Override
-        public WinResult.Coords next() {
-            return new WinResult.Coords(x, i--);
-        }
-    }
-
-    private static class After extends NeighbourDetector {
-
-        private final int x;
-        private int i;
-
-        public After(int x, int y, short[][] board, short search) {
-            super(board, search);
-            this.x = x;
-            this.i = y + 1;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return x < BOARD_DIMENSION && i < BOARD_DIMENSION && board[x][i] == search;
-        }
-
-        @Override
-        public WinResult.Coords next() {
-            return new WinResult.Coords(x, i++);
-        }
+            @Override
+            public WinResult.Coords next() {
+                return new WinResult.Coords(x, i++);
+            }
+        };
     }
 }
