@@ -1,9 +1,12 @@
 # TicTacToe Game 10x10 with configurable win threshold
 
 [![Build Status][noughts-crosses-travis-image] ][noughts-crosses-travis-url]
+[![License: MIT][noughts-crosses-license-image] ][noughts-crosses-license-url]
 
 [noughts-crosses-travis-image]: https://travis-ci.com/itallix/noughts-crosses.svg?token=VccNzTqqao1HL7VwvVz1&branch=master
 [noughts-crosses-travis-url]: https://travis-ci.com/github/itallix/noughts-crosses
+[noughts-crosses-license-image]: https://img.shields.io/badge/License-MIT-yellow.svg
+[noughts-crosses-license-url]: https://opensource.org/licenses/MIT
 
 ## Run project:
 

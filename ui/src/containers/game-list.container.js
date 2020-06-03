@@ -1,6 +1,6 @@
 import {connect} from 'react-redux';
 import GameListComponent from '../components/game-list.component';
-import {gameConnect, gameCreate, gameList, setSymbol} from "../ducks/actions";
+import {gameConnect, gameCreate, gameList} from "../ducks/actions";
 
 const mapStateToProps = state => {
     const {list, error, loading} = state.ticTacReducer;

@@ -211,6 +211,12 @@ export default class GameListComponent extends Component {
                         finished
                     </Tag>
                 );
+            default:
+                return (
+                    <Tag icon={<MinusCircleOutlined />} color="error">
+                        undefined
+                    </Tag>
+                );
         }
     }
 

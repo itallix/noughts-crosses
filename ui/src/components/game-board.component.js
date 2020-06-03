@@ -39,7 +39,7 @@ export default class GameBoardComponent extends Component {
 
     renderGameOver() {
         const {isOwner, win} = this.props;
-        console.log(win);
+
         return (<React.Fragment>
             <br/>
             {(isOwner && win.who === 1 || !isOwner && win.who === - 1) &&

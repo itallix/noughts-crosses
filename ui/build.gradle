@@ -16,10 +16,6 @@ tasks['yarn'].configure {
     outputs.file(file("${projectDir}/yarn.lock"))
 }
 
-task eslint(type: YarnTask, dependsOn: ':yarn') {
-    args = ["gulp", "eslint", "--quiet=true"]
-}
-
 jar {
     from(fileTree('build')) {
         exclude('libs')
