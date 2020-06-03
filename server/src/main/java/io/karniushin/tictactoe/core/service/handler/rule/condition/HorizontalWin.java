@@ -11,19 +11,57 @@ public class HorizontalWin extends WinCondition {
     }
 
     @Override
-    protected WinResult detectWinner(final int x, final int y, final short[][] board, final short search, final int threshold) {
-        for (int i = y - 1; x >= 0 && i >= 0 && board[x][i] == search; i--) {
-            winningLine.add(0, new WinResult.Coords(x, i));
-            if (thresholdReached(threshold)) {
-                return winner(search);
-            }
+    protected WinIterator before(final int x, final int y, final short[][] board, final short search) {
+        return new Before(x, y, board, search);
+    }
+
+    @Override
+    protected WinIterator after(final int x, final int y, final short[][] board, final short search) {
+        return new After(x, y, board, search);
+    }
+
+
+    private static class Before extends WinIterator {
+
+        private final int x;
+        private int i;
+
+        public Before(int x, int y, short[][] board, short search) {
+            super(board, search);
+            this.x = x;
+            this.i = y - 1;
         }
-        for (int i = y + 1; x < BOARD_DIMENSION && i < BOARD_DIMENSION && board[x][i] == search; i++) {
-            winningLine.add(new WinResult.Coords(x, i));
-            if (thresholdReached(threshold)) {
-                return winner(search);
-            }
+
+        @Override
+        public boolean hasNext() {
+            return x >= 0 && i >= 0 && board[x][i] == search;
         }
-        return null;
+
+        @Override
+        public WinResult.Coords next() {
+            return new WinResult.Coords(x, i--);
+        }
+    }
+
+    private static class After extends WinIterator {
+
+        private final int x;
+        private int i;
+
+        public After(int x, int y, short[][] board, short search) {
+            super(board, search);
+            this.x = x;
+            this.i = y + 1;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return x < BOARD_DIMENSION && i < BOARD_DIMENSION && board[x][i] == search;
+        }
+
+        @Override
+        public WinResult.Coords next() {
+            return new WinResult.Coords(x, i++);
+        }
     }
 }

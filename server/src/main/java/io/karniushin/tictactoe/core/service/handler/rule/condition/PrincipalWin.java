@@ -11,23 +11,64 @@ public class PrincipalWin extends WinCondition {
     }
 
     @Override
-    protected WinResult detectWinner(final int x, final int y, final short[][] board, final short search, final int threshold) {
-        if (x > 0 && y > 0) {
-            for (int i = x - 1, j = y - 1; i >= 0 && j >= 0 && board[i][j] == search; i--, j--) {
-                winningLine.add(0, new WinResult.Coords(i, j));
-                if (thresholdReached(threshold)) {
-                    return winner(search);
-                }
-            }
+    protected WinIterator before(final int x, final int y, final short[][] board, final short search) {
+        return new Before(x, y, board, search);
+    }
+
+    @Override
+    protected WinIterator after(final int x, final int y, final short[][] board, final short search) {
+        return new After(x, y, board, search);
+    }
+
+    private static class Before extends WinIterator {
+
+        private int i;
+        private int j;
+        private final int x;
+        private final int y;
+
+        public Before(int x, int y, short[][] board, short search) {
+            super(board, search);
+            this.x = x;
+            this.y = y;
+            this.i = x - 1;
+            this.j = y - 1;
         }
-        if (x < BOARD_DIMENSION && y < BOARD_DIMENSION) {
-            for (int i = x + 1, j = y + 1; i < BOARD_DIMENSION && j < BOARD_DIMENSION && board[i][j] == search; i++, j++) {
-                winningLine.add(new WinResult.Coords(i, j));
-                if (thresholdReached(threshold)) {
-                    return winner(search);
-                }
-            }
+
+        @Override
+        public boolean hasNext() {
+            return x > 0 && y > 0 && i >= 0 && j >= 0 && board[i][j] == search;
         }
-        return null;
+
+        @Override
+        public WinResult.Coords next() {
+            return new WinResult.Coords(i--, j--);
+        }
+    }
+
+    private static class After extends WinIterator {
+
+        private int i;
+        private int j;
+        private final int x;
+        private final int y;
+
+        public After(int x, int y, short[][] board, short search) {
+            super(board, search);
+            this.x = x;
+            this.y = y;
+            this.i = x + 1;
+            this.j = y + 1;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return x < BOARD_DIMENSION && y < BOARD_DIMENSION && i < BOARD_DIMENSION && j < BOARD_DIMENSION && board[i][j] == search;
+        }
+
+        @Override
+        public WinResult.Coords next() {
+            return new WinResult.Coords(i++, j++);
+        }
     }
 }

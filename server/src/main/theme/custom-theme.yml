@@ -1,0 +1,100 @@
+# for a default theme: https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/default-theme.yml
+font:
+  catalog:
+   # Noto Serif supports Latin, Latin-1 Supplement, Latin Extended-A, Greek, Cyrillic, Vietnamese & an assortment of symbols
+    Noto Serif:
+      normal: notoserif-regular-subset.ttf
+      bold: notoserif-bold-subset.ttf
+      italic: notoserif-italic-subset.ttf
+      bold_italic: notoserif-bold_italic-subset.ttf
+    # M+ 1mn supports ASCII and the circled numbers used for conums
+    M+ 1mn:
+      normal: mplus1mn-regular-ascii-conums.ttf
+      bold: mplus1mn-bold-ascii.ttf
+      italic: mplus1mn-italic-ascii.ttf
+      bold_italic: mplus1mn-bold_italic-ascii.ttf
+    # M+ 1p supports Latin, Latin-1 Supplement, Latin Extended, Greek, Cyrillic, Vietnamese, Japanese & an assortment of symbols
+    # It also provides arrows for ->, <-, => and <= replacements in case these glyphs are missing from font
+    M+ 1p Fallback:
+      normal: mplus1p-regular-fallback.ttf
+      bold: mplus1p-regular-fallback.ttf
+      italic: mplus1p-regular-fallback.ttf
+      bold_italic: mplus1p-regular-fallback.ttf
+  fallbacks:
+    - M+ 1p Fallback
+
+title_page:
+  align: left
+
+page:
+  layout: portrait
+  margin: [0.75in, 1in, 0.75in, 1in]
+  size: A4
+base:
+  #UTF-8, see https://github.com/asciidoctor/asciidoctor-pdf/blob/master/docs/theming-guide.adoc#bundled-fonts
+  font_family: Noto Serif
+  font_size: 9
+#  line_height_length: 17
+  line_height_length: 10
+  font_color: #414C58
+  line_height: $base_line_height_length / $base_font_size
+vertical_rhythm: $base_line_height_length
+heading:
+  font_color: #FF8000
+  font_size: $base_font_size + 2
+  font_style: bold
+  line_height: 1.2
+  margin_bottom: $vertical_rhythm
+link:
+  font_color: #009900
+outline_list:
+  indent: $base_font_size * 1.5
+
+header:
+  height: 0.75in
+  line_height: 1
+  recto_content:
+    right: '{page-number}'
+  verso_content:
+    left: '*{page-number}*'
+#  recto_content:
+#    center: '{document-title}'
+#  verso_content:
+#    center: '{document-title}'
+
+footer:
+  height: 0.75in
+  line_height: 1
+  recto_content:
+    right: '{chapter-title} | *{page-number}*'
+  verso_content:
+    left: '*{page-number}* | {chapter-title}'
+
+image:
+  align: center
+
+caption:
+  align: center
+  font_color: #FF0000
+  font_size: 10
+
+
+# https://github.com/asciidoctor/asciidoctor-pdf/blob/master/docs/theming-guide.adoc#code
+# code is used for source blocks (perhaps change to source or listing?)
+code:
+  font_color: $base_font_color
+  font_family: M+ 1mn
+  font_size: ceil($base_font_size-1)
+  padding: $code_font_size
+  line_height: 1
+  background_color: f5f5f5
+  border_color: cccccc
+  border_radius: $base_border_radius
+  border_width: 0.75
+
+conum:
+  font_family: M+ 1mn
+  font_color: $literal_font_color
+  font_size: $base_font_size
+  line_height: 4 / 3
+
