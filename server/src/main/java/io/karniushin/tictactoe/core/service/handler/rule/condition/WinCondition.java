@@ -19,14 +19,14 @@ public abstract class WinCondition {
         List<WinResult.Coords> winningLine = new ArrayList<>();
         winningLine.add(new WinResult.Coords(x, y));
 
-        WinIterator before = before(x, y, board, search);
+        NeighbourDetector before = before(x, y, board, search);
         while (before.hasNext()) {
             winningLine.add(0, before.next());
             if (winningLine.size() == threshold) {
                 return new WinResult(type, search, winningLine);
             }
         }
-        WinIterator after = after(x, y, board, search);
+        NeighbourDetector after = after(x, y, board, search);
         while (after.hasNext()) {
             winningLine.add(after.next());
             if (winningLine.size() == threshold) {
@@ -36,16 +36,16 @@ public abstract class WinCondition {
         return null;
     }
 
-    protected abstract WinIterator before(int x, int y, short[][] board, short search);
+    protected abstract NeighbourDetector before(int x, int y, short[][] board, short search);
 
-    protected abstract WinIterator after(int x, int y, short[][] board, short search);
+    protected abstract NeighbourDetector after(int x, int y, short[][] board, short search);
 
-    protected abstract static class WinIterator implements Iterator<WinResult.Coords> {
+    protected abstract static class NeighbourDetector implements Iterator<WinResult.Coords> {
 
         protected final short[][] board;
         protected final short search;
 
-        public WinIterator(short[][] board, short search) {
+        public NeighbourDetector(short[][] board, short search) {
             this.board = board;
             this.search = search;
         }

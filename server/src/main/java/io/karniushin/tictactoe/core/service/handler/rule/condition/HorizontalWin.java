@@ -11,17 +11,17 @@ public class HorizontalWin extends WinCondition {
     }
 
     @Override
-    protected WinIterator before(final int x, final int y, final short[][] board, final short search) {
+    protected NeighbourDetector before(final int x, final int y, final short[][] board, final short search) {
         return new Before(x, y, board, search);
     }
 
     @Override
-    protected WinIterator after(final int x, final int y, final short[][] board, final short search) {
+    protected NeighbourDetector after(final int x, final int y, final short[][] board, final short search) {
         return new After(x, y, board, search);
     }
 
 
-    private static class Before extends WinIterator {
+    private static class Before extends NeighbourDetector {
 
         private final int x;
         private int i;
@@ -43,7 +43,7 @@ public class HorizontalWin extends WinCondition {
         }
     }
 
-    private static class After extends WinIterator {
+    private static class After extends NeighbourDetector {
 
         private final int x;
         private int i;
