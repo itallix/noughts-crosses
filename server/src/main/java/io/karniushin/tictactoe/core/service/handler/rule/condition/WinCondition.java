@@ -9,7 +9,6 @@ import io.karniushin.tictactoe.core.domain.WinResult;
 public abstract class WinCondition {
 
     protected WinResult.WinResultType type;
-    protected List<WinResult.Coords> winningLine;
 
     public WinResult check(final CheckParams params) {
         final int x = params.getX();
@@ -17,17 +16,17 @@ public abstract class WinCondition {
         final short[][] board = params.getBoard();
         final short search = params.getSearch();
         final int threshold = params.getThreshold();
-        winningLine = new ArrayList<>();
+        List<WinResult.Coords> winningLine = new ArrayList<>();
         winningLine.add(new WinResult.Coords(x, y));
 
-        Iterator<WinResult.Coords> before = before(x, y, board, search);
+        WinIterator before = before(x, y, board, search);
         while (before.hasNext()) {
             winningLine.add(0, before.next());
             if (winningLine.size() == threshold) {
                 return new WinResult(type, search, winningLine);
             }
         }
-        Iterator<WinResult.Coords> after = after(x, y, board, search);
+        WinIterator after = after(x, y, board, search);
         while (after.hasNext()) {
             winningLine.add(after.next());
             if (winningLine.size() == threshold) {
