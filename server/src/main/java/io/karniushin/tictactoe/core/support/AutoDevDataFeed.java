@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AutoDevDataFeed implements ApplicationListener<ContextRefreshedEvent> {
 
-    private static Logger log = LoggerFactory.getLogger(AutoDevDataFeed.class);
+    private static final Logger log = LoggerFactory.getLogger(AutoDevDataFeed.class);
 
     private final Fixtures fixtures;
 
