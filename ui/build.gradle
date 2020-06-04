@@ -24,7 +24,7 @@ jar {
     }
 }
 
-jar.dependsOn('yarn_run_build')
+jar.dependsOn('yarn_install', 'yarn_run_build')
 
 idea {
     module {

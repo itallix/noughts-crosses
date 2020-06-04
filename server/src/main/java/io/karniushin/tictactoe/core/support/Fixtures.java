@@ -37,16 +37,6 @@ public class Fixtures {
         );
     }
 
-//    public UUID ownerRepeatTurnSetup(boolean isNextTurnByOwner) {
-//        UUID playerA = UUID.randomUUID();
-//        UUID playerB = UUID.randomUUID();
-//        return gameService.addGame(new GameSessionBuilder(playerA, new int []{0, 5, 0, 0, 0, 0, 41, 0, 0, 0, 1, 0, 0, 25})
-//                .withOpponentId(playerB)
-//                .withNextTurnByOwner(isNextTurnByOwner)
-//                .build()
-//        );
-//    }
-
     public UUID ownerEndGameHorizontalSetup() {
         UUID playerA = UUID.randomUUID();
         UUID playerB = UUID.randomUUID();
