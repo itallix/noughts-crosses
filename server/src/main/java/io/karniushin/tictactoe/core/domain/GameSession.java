@@ -4,11 +4,8 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
-import static java.time.LocalDate.now;
-
 public class GameSession {
 
-    public static final byte VIRGIN = 0;
     public static final int BOARD_DIMENSION = 10;
 
     private final UUID id;
