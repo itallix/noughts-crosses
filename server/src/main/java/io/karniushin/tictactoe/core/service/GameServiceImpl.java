@@ -103,13 +103,16 @@ public class GameServiceImpl implements GameService {
         }
     }
 
+    @Override
     public UUID addGame(GameSession gameSession) {
         games.put(gameSession.getId(), gameSession);
         locks.put(gameSession.getId(), new ReentrantLock());
         return gameSession.getId();
     }
 
+    @Override
     public GameSession getGame(UUID gameId) {
+        checkGameExists(gameId);
         return games.get(gameId);
     }
 

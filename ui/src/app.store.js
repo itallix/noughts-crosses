@@ -1,5 +1,7 @@
 /* global window */
 import {applyMiddleware, compose, createStore, combineReducers} from 'redux';
+import { connectRouter, routerMiddleware } from 'connected-react-router';
+import { createBrowserHistory } from 'history'
 import createSagaMiddleware from 'redux-saga';
 import {all, call} from 'redux-saga/effects';
 import { ticTacReducer, ticTacSagas } from './ducks';
@@ -29,21 +31,20 @@ const composeEnhancers =
             // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
         }) : compose;
 
+export const history = createBrowserHistory();
 
+export default function configureStore(preloadedState) {
+    const createRootReducer = (history) => combineReducers({
+        ticTacReducer,
+        router: connectRouter(history),
+    });
 
-function configureStore(preloadedState) {
-    const enhancer = composeEnhancers(applyMiddleware(sagaMiddleware));
+    const enhancer = composeEnhancers(applyMiddleware(sagaMiddleware, routerMiddleware(history)));
 
-    const store = createStore(combineReducers({ticTacReducer}), preloadedState, enhancer);
+    const store = createStore(createRootReducer(history), preloadedState, enhancer);
 
     sagaMiddleware.run(combinedSaga);
 
-    if (window.Cypress) {
-        window.__store__ = store;
-    }
-
     return store;
 }
-
-export const store = configureStore();
 /* eslint-enable */

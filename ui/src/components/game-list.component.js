@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Avatar, Badge, Button, Divider, Drawer, Form, Input, InputNumber, List, Modal, Result, Skeleton, Switch, Tag, Tooltip} from 'antd';
-import {ClockCircleOutlined, ReloadOutlined, UserOutlined, MinusCircleOutlined, PlusOutlined, SyncOutlined} from '@ant-design/icons';
+import {ClockCircleOutlined, MinusCircleOutlined, PlusOutlined, ReloadOutlined, SyncOutlined, UserOutlined} from '@ant-design/icons';
 
 import {GameSession, GameStatuses} from '../app.types';
 import {isWaiting} from '../app.utils';
@@ -28,6 +28,7 @@ export default class GameListComponent extends Component {
         loading: PropTypes.bool.isRequired,
         onConnect: PropTypes.func.isRequired,
         onCreate: PropTypes.func.isRequired,
+        onInit: PropTypes.func.isRequired,
         onReload: PropTypes.func.isRequired
     };
 
@@ -45,6 +46,10 @@ export default class GameListComponent extends Component {
             }
         }
         this.formRef = React.createRef();
+    }
+
+    componentDidMount() {
+        this.props.onInit();
     }
 
     showModal = (gameId) => {

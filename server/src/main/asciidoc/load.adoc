@@ -18,7 +18,7 @@ include::{snippets}/load/list/response-fields.adoc[]
 
 == Loading game state by id
 
-You can load the state of the game by id.
+You can load the state of the game by gameId and playerId.
 
 include::{snippets}/load/get/http-request.adoc[]
 include::{snippets}/load/get/curl-request.adoc[]
@@ -31,3 +31,7 @@ include::{snippets}/load/get/http-response.adoc[]
 Response fields explained:
 
 include::{snippets}/load/get/response-fields.adoc[]
+
+If the requested game doesn't exist:
+
+include::{snippets}/get/doesNotExist/http-response.adoc[]

@@ -1,5 +1,5 @@
 import reducer, {defaultState as initialState} from './reducer';
-import {gameList, gameCreate, gameConnect, gameSession, gameTurnRequested} from './actions';
+import {dashboardSync, gameConnect, gameCreate, gameList, gameSession, gameSessionSync} from './actions';
 import {GameStatuses, WaitStatuses} from "../app.types";
 
 describe('TicTacToe reducer', () => {
@@ -32,13 +32,9 @@ describe('TicTacToe reducer', () => {
     });
 
     test('should initialize session when gameCreate succeeded', () => {
-        const state = reducer(initialState, gameCreate.succeeded({
-            gameId: 'uuid-game', ownerId: 'uuid-owner', ownerName: 'Vincent'
-        }));
+        const state = reducer(initialState, gameCreate.succeeded({ ownerName: 'Vincent' }));
         expect(state).toMatchObject({
             session: {
-                gameId: 'uuid-game',
-                playerId: 'uuid-owner',
                 playerName: 'Vincent',
                 isOwner: true,
                 status: GameStatuses.WAITING
@@ -54,13 +50,9 @@ describe('TicTacToe reducer', () => {
     });
 
     test('should update session when gameConnect succeeded', () => {
-        const state = reducer(initialState, gameConnect.succeeded(
-            { gameId: 'uuid-game', isOwnerTurn: true, opponentId: 'uuid-user', opponentName: 'Christian' }
-        ));
+        const state = reducer(initialState, gameConnect.succeeded({ opponentName: 'Christian' }));
         expect(state).toMatchObject({
             session: {
-                gameId: 'uuid-game',
-                playerId: 'uuid-user',
                 playerName: 'Christian',
                 isOwner: false,
                 status: GameStatuses.ACTIVE
@@ -82,7 +74,7 @@ describe('TicTacToe reducer', () => {
         }
         let state = reducer({...initialState, session: {...initialState.session, isOwner: true} },
             gameSession.succeeded({
-                board, shouldWait: true, status: GameStatuses.ACTIVE
+                board, shouldWait: true, status: GameStatuses.ACTIVE, owner: true,
             }));
         expect(state).toMatchObject({
             session: {
@@ -94,13 +86,83 @@ describe('TicTacToe reducer', () => {
 
         state = reducer({...initialState, session: {...initialState.session, isOwner: true} },
             gameSession.succeeded({
-                board, wait: WaitStatuses.OPPONENT, status: GameStatuses.ACTIVE
+                board, shouldWait: false, status: GameStatuses.ACTIVE, owner: true
             }));
         expect(state).toMatchObject({
             session: {
                 board,
                 shouldWait: false,
                 status: GameStatuses.ACTIVE
+            }
+        });
+    });
+
+    test('should set error when gameSession failed', () => {
+        const state = reducer(initialState, gameSession.failed());
+        expect(state).toMatchObject({
+            error: true
+        });
+    });
+
+    test('should process dashboardSync', () => {
+        const data = [{
+            gameId: 'uuid1', owner: 'Daniel', status: GameStatuses.ACTIVE
+        }, {
+            gameId: 'uuid2', owner: 'Sebastian', status: GameStatuses.WAITING
+        }];
+        let state = reducer({...initialState, list: data}, dashboardSync({type: "UPDATED", gameId: 'uuid2', status: GameStatuses.ACTIVE}));
+        expect(state).toMatchObject({
+            list: [{
+                gameId: 'uuid1', owner: 'Daniel', status: GameStatuses.ACTIVE
+            }, {
+                gameId: 'uuid2', owner: 'Sebastian', status: GameStatuses.ACTIVE
+            }],
+            loading: false,
+            error: false
+        });
+
+        state = reducer({...initialState, list: data}, dashboardSync({
+            type: "ADDED", gameId: 'uuid3', owner: 'Christina', status: GameStatuses.FINISHED
+        }));
+        expect(state).toMatchObject({
+            list: [{
+                gameId: 'uuid1', owner: 'Daniel', status: GameStatuses.ACTIVE
+            }, {
+                gameId: 'uuid2', owner: 'Sebastian', status: GameStatuses.WAITING
+            }, {
+                gameId: 'uuid3', owner: 'Christina', status: GameStatuses.FINISHED
+            }],
+            loading: false,
+            error: false
+        });
+    });
+
+    test('should process sessionSync', () => {
+        const board = Array(10).fill(0).map(() => Array(10).fill(0));
+        for (let i = 0; i < 4; i++) {
+            board[i][i] = 1;
+        }
+        let state = reducer({...initialState, session: {...initialState.session, isOwner: true} },
+            gameSessionSync({
+                board, wait: WaitStatuses.OPPONENT, status: GameStatuses.ACTIVE, owner: true,
+            }));
+        expect(state).toMatchObject({
+            session: {
+                board,
+                shouldWait: false,
+                status: GameStatuses.ACTIVE
+            }
+        });
+
+        state = reducer({...initialState, session: {...initialState.session, isOwner: true} },
+            gameSessionSync({
+                board, wait: WaitStatuses.OWNER, status: GameStatuses.WAITING, owner: true,
+            }));
+        expect(state).toMatchObject({
+            session: {
+                board,
+                shouldWait: true,
+                status: GameStatuses.WAITING
             }
         });
     });

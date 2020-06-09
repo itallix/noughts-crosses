@@ -1,9 +1,10 @@
 import {eventChannel} from 'redux-saga';
-import {all, call, put, select, take, takeLatest} from 'redux-saga/effects';
-import {listGameSessions, connectToGame, createNewGame, makeTurn, getGameState} from '../app.service';
-import {gameList, gameSession, gameConnect, gameCreate, gameTurnRequested, updateDashboard, appLoaded} from "./actions";
+import {all, call, put, take, takeLatest} from 'redux-saga/effects';
+import {connectToGame, createNewGame, getGameState, listGameSessions, makeTurn} from '../app.service';
+import {boardLoaded, dashboardLoaded, dashboardSync, gameConnect, gameCreate, gameList, gameSession, gameSessionSync, gameTurnRequested} from "./actions";
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
+import {push} from 'connected-react-router';
 
 export function* list() {
     try {
@@ -16,12 +17,13 @@ export function* list() {
     }
 }
 
-export function* create({ payload: { username, threshold, symbol } }) {
+export function* create({payload: {username, threshold, symbol}}) {
     console.log(`Creating new game with owner=${username} and threshold=${threshold}`);
     try {
-        const { gameId, ownerId } = yield call(createNewGame, username, threshold);
+        const {gameId, ownerId} = yield call(createNewGame, username, threshold);
         yield put(gameCreate.succeeded({gameId, ownerId, ownerName: username}));
-        yield call(wsSessionSaga, gameId);
+        yield put(push(`/${gameId}/${ownerId}`));
+        yield call(connectSession, { payload: { gameId } });
         console.log(`Successfully created new game with id=${gameId} and ownerId=${ownerId}`);
     } catch (e) {
         console.warn('Failed to create new game', e);
@@ -29,11 +31,12 @@ export function* create({ payload: { username, threshold, symbol } }) {
     }
 }
 
-export function* connect({ payload: { gameId, username }}) {
+export function* connect({payload: {gameId, username}}) {
     try {
         const opponentId = yield call(connectToGame, gameId, username);
         yield put(gameConnect.succeeded({gameId, opponentId, opponentName: username}));
-        yield call(wsSessionSaga, gameId);
+        yield put(push(`/${gameId}/${opponentId}`));
+        yield call(connectSession, { payload: { gameId } });
         console.log(`Successfully connected to the game with id=${gameId} as ${username}`);
     } catch (e) {
         console.warn(`Failed to connect to the game with id = ${gameId} `, e);
@@ -41,10 +44,7 @@ export function* connect({ payload: { gameId, username }}) {
     }
 }
 
-const getGameSession = state => state.ticTacReducer.session;
-
-export function* turn({payload: { row, col }}) {
-    const { gameId, playerId } = yield select(getGameSession);
+export function* turn({payload: {gameId, playerId, row, col}}) {
     try {
         yield call(makeTurn, gameId, playerId, row, col);
     } catch (e) {
@@ -53,14 +53,29 @@ export function* turn({payload: { row, col }}) {
     }
 }
 
-export function* get() {
-    const { gameId, playerId } = yield select(getGameSession);
+export function* get({payload: {gameId, playerId}}) {
     try {
         const gameState = yield call(getGameState, gameId, playerId);
         yield put(gameSession.succeeded(gameState));
+        console.log(`Successfully loaded game state of the session with id=${gameId}`, gameState);
     } catch (e) {
-        console.warn(`Cannot get game state with id = ${gameId} and playerId = ${playerId}`, e);
+        console.warn(`Cannot get game state with gameId = ${gameId} and playerId = ${playerId}`, e);
+        yield put(gameSession.failed());
     }
+}
+
+export function* connectDashboard() {
+    if (sessionSubscription !== null) {
+        sessionSubscription.unsubscribe();
+    }
+    yield call(wsDashboardSaga);
+}
+
+export function* connectSession({payload: { gameId }}) {
+    if (dashboardSubscription !== null) {
+        dashboardSubscription.unsubscribe();
+    }
+    yield call(wsSessionSaga, gameId);
 }
 
 export default function* listSaga() {
@@ -70,11 +85,14 @@ export default function* listSaga() {
         takeLatest([gameConnect.requested], connect),
         takeLatest([gameTurnRequested], turn),
         takeLatest([gameSession.requested], get),
-        takeLatest([appLoaded], wsDashboardSaga)
+        takeLatest([dashboardLoaded], connectDashboard),
+        takeLatest([boardLoaded], connectSession)
     ]);
 }
 
 let stompClient = null;
+let dashboardSubscription = null;
+let sessionSubscription = null;
 
 function initSessionWs(gameId) {
     return eventChannel(emitter => {
@@ -82,14 +100,16 @@ function initSessionWs(gameId) {
         stompClient = Stomp.over(socket);
         stompClient.connect({}, frame => {
             console.log('Connected: ' + frame);
-            stompClient.subscribe(`/topic/${gameId}`, e => {
+            sessionSubscription = stompClient.subscribe(`/topic/${gameId}`, e => {
                 const body = e.body;
                 if (body) {
-                    return emitter(gameSession.succeeded(JSON.parse(body)));
+                    return emitter(gameSessionSync(JSON.parse(body)));
                 }
             });
         });
-        return () => { console.log('Session disconnected'); }
+        return () => {
+            console.log('Session disconnected');
+        }
     })
 }
 
@@ -108,14 +128,16 @@ function initDashboardWs() {
         stompClient = Stomp.over(socket);
         stompClient.connect({}, frame => {
             console.log('Connected: ' + frame);
-            stompClient.subscribe('/topic/games', e => {
+            dashboardSubscription = stompClient.subscribe('/topic/games', e => {
                 const body = e.body;
                 if (body) {
-                    return emitter(updateDashboard(JSON.parse(body)));
+                    return emitter(dashboardSync(JSON.parse(body)));
                 }
             });
         });
-        return () => { console.log('Dashboard disconnected'); }
+        return () => {
+            console.log('Dashboard disconnected');
+        }
     })
 }
 

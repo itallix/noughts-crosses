@@ -649,7 +649,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 156
 
 [ {
-  &quot;gameId&quot; : &quot;67bafc1a-019d-4eb9-ae28-1c88311faa5b&quot;,
+  &quot;gameId&quot; : &quot;d495f975-e88e-458a-b419-4e76def7f0f2&quot;,
   &quot;owner&quot; : &quot;Dennis&quot;,
   &quot;status&quot; : &quot;WAITING_FOR_OPPONENT&quot;,
   &quot;threshold&quot; : 10,
@@ -712,24 +712,24 @@ Content-Length: 156
 <h2 id="loading-game-state-by-id">Loading game state by id</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can load the state of the game by id.</p>
+<p>You can load the state of the game by gameId and playerId.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="http">GET /api/v1/tictac/3a28588c-ea6e-435b-8332-81962273e257/b5ad4514-7afb-4a75-b856-4f066df408ce HTTP/1.1
+<pre class="CodeRay highlight nowrap"><code data-lang="http">GET /api/v1/tictac/7f6c522b-8e84-4f33-956b-c224d32361c8/6a348cf3-82a0-4f5e-aa05-43610fcd3dee HTTP/1.1
 Content-Type: application/json
 Host: localhost:8080</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ curl 'http://localhost:8080/api/v1/tictac/3a28588c-ea6e-435b-8332-81962273e257/b5ad4514-7afb-4a75-b856-4f066df408ce' -i -X GET \
+<pre class="CodeRay highlight"><code data-lang="bash">$ curl 'http://localhost:8080/api/v1/tictac/7f6c522b-8e84-4f33-956b-c224d32361c8/6a348cf3-82a0-4f5e-aa05-43610fcd3dee' -i -X GET \
     -H 'Content-Type: application/json'</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ http GET 'http://localhost:8080/api/v1/tictac/3a28588c-ea6e-435b-8332-81962273e257/b5ad4514-7afb-4a75-b856-4f066df408ce' \
+<pre class="CodeRay highlight"><code data-lang="bash">$ http GET 'http://localhost:8080/api/v1/tictac/7f6c522b-8e84-4f33-956b-c224d32361c8/6a348cf3-82a0-4f5e-aa05-43610fcd3dee' \
     'Content-Type:application/json'</code></pre>
 </div>
 </div>
@@ -739,8 +739,8 @@ Host: localhost:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
+Content-Length: 897
 Content-Type: application/json;charset=UTF-8
-Content-Length: 851
 
 {
   &quot;board&quot; : [ [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] ],
@@ -780,7 +780,9 @@ Content-Length: 851
       &quot;x&quot; : 0,
       &quot;y&quot; : 9
     } ]
-  }
+  },
+  &quot;playerName&quot; : &quot;PlayerA&quot;,
+  &quot;owner&quot; : true
 }</code></pre>
 </div>
 </div>
@@ -836,8 +838,30 @@ Content-Length: 851
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Winning combination represented by sequence of coordinates (x; y)</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>playerName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the player asking for a game session state</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>owner</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If the player is owner or not</p></td>
+</tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>If the requested game doesn&#8217;t exist:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 404 Not Found
+Content-Length: 65
+Content-Type: text/plain;charset=UTF-8
+
+Game with id [095873fd-bf25-4cde-a6e0-278c236c8170] doesn't exist</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>

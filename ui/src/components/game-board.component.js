@@ -11,26 +11,35 @@ import {isFinished, isInProgress, isWaiting} from "../app.utils";
 export default class GameBoardComponent extends Component {
 
     static propTypes = {
+        error: PropTypes.bool.isRequired,
+        loading: PropTypes.bool.isRequired,
         gameId: PropTypes.string.isRequired,
+        playerId: PropTypes.string.isRequired,
         shouldWait: PropTypes.bool.isRequired,
         isOwner: PropTypes.bool.isRequired,
+        onInit: PropTypes.func.isRequired,
         onRefresh: PropTypes.func.isRequired,
         onTurn: PropTypes.func.isRequired,
         board: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number.isRequired).isRequired),
-        playerName: PropTypes.string.isRequired,
-        status: PropTypes.oneOf(Object.values(GameStatuses)).isRequired,
+        playerName: PropTypes.string,
+        status: PropTypes.oneOf(Object.values(GameStatuses)),
         win: WinResult
     };
 
+    componentDidMount() {
+        const {gameId, onInit, playerId} = this.props;
+        onInit(gameId, playerId);
+    }
+
     renderWaitingBlock() {
-        const {playerName, gameId, onRefresh} = this.props;
+        const {gameId, onRefresh, playerId, playerName} = this.props;
 
         return (<Result
             status="success"
             title={`Hi ${playerName}! You've just successfully created the new game`}
             subTitle={`Game id: ${gameId}. Please wait for opponent to join the game.`}
             extra={[
-                <Button type="primary" key="refresh" onClick={onRefresh}>
+                <Button type="primary" key="refresh" onClick={() => onRefresh(gameId, playerId)}>
                     Refresh
                 </Button>
             ]}
@@ -42,26 +51,26 @@ export default class GameBoardComponent extends Component {
 
         return (<React.Fragment>
             <br/>
-            {(isOwner && win.who === 1 || !isOwner && win.who === - 1) &&
-                <Alert
-                    message="Game is Over"
-                    description="Congratulations! You won the game! Refresh the browser window if you want to try your luck again."
-                    type="success"
-                    showIcon
-                /> ||
+            {(isOwner && win.who === 1 || !isOwner && win.who === -1) &&
+            <Alert
+                message="Game is Over"
+                description="Congratulations! You won the game! Refresh the browser window if you want to try your luck again."
+                type="success"
+                showIcon
+            /> ||
             (!isOwner && win.who === 1 || isOwner && win.who === -1) &&
-                <Alert
-                    message="Game is Over"
-                    description="You lost the game! Refresh the browser window if you want to try your luck again."
-                    type="error"
-                    showIcon
-                />
+            <Alert
+                message="Game is Over"
+                description="You lost the game! Refresh the browser window if you want to try your luck again."
+                type="error"
+                showIcon
+            />
             }
         </React.Fragment>)
     }
 
     renderTurnHint() {
-        const { shouldWait, onRefresh } = this.props;
+        const {gameId, shouldWait, playerId, onRefresh} = this.props;
 
         return (<React.Fragment>
             {!shouldWait && <Alert
@@ -76,12 +85,12 @@ export default class GameBoardComponent extends Component {
                 type="warning"
                 showIcon/>
             }
-            <Button className='refresh-btn' type='dashed' onClick={onRefresh}>Refresh</Button>
+            <Button className='refresh-btn' type='dashed' onClick={() => onRefresh(gameId, playerId)}>Refresh</Button>
         </React.Fragment>);
     }
 
     renderBoard() {
-        const {board, isOwner, onTurn, status, shouldWait, win} = this.props;
+        const {board, gameId, isOwner, onTurn, playerId, status, shouldWait, win} = this.props;
 
         const isWinnerCell = (seq, r, c) => seq.find(p => p.x === r && p.y === c);
 
@@ -91,7 +100,7 @@ export default class GameBoardComponent extends Component {
                     {row.map((num, idx) => {
                         const cellClasses = classNames('cell', {
                             'active': !shouldWait && row[idx] === 0 && isInProgress(status),
-                            'winner': isFinished(status) && (isOwner && win.who === 1 || !isOwner && win.who === - 1) &&
+                            'winner': isFinished(status) && (isOwner && win.who === 1 || !isOwner && win.who === -1) &&
                                 isWinnerCell(win.seq, rdx, idx),
                             'looser': isFinished(status) && (isOwner && win.who === -1 || !isOwner && win.who === 1) &&
                                 isWinnerCell(win.seq, rdx, idx)
@@ -101,7 +110,7 @@ export default class GameBoardComponent extends Component {
                                  style={{opacity: isOwner && row[idx] === 1 || !isOwner && row[idx] === -1 ? 0.8 : 0.4}}
                                  onClick={() => {
                                      if (!shouldWait && row[idx] === 0 && isInProgress(status)) {
-                                         onTurn(rdx, idx)
+                                         onTurn(gameId, playerId, rdx, idx)
                                      }
                                  }}>
                                 {row[idx] === 1 && <CloseOutlined className='owner'/>}
@@ -114,32 +123,49 @@ export default class GameBoardComponent extends Component {
         </React.Fragment>);
     }
 
+    renderError() {
+        const {gameId, playerId, error, onRefresh} = this.props;
+
+        return (<React.Fragment>
+            {error && <Result
+                status="500"
+                title="500"
+                subTitle="Sorry, something went wrong."
+                extra={<Button type="primary" onClick={() => onRefresh(gameId, playerId)}>Try Again</Button>}
+            />}
+        </React.Fragment>)
+    }
+
     render() {
-        const {playerName, shouldWait, status} = this.props;
+        const {error, loading, playerName, shouldWait, status} = this.props;
 
         return <div className='game-board'>
-            <Alert message={`Hi ${playerName}!`} type="success" />
-            {isWaiting(status) && this.renderWaitingBlock()}
-            {isFinished(status) && this.renderGameOver()}
-            {!isWaiting(status) && <React.Fragment>
-                <Divider />
-                {isInProgress(status) && this.renderTurnHint()}
-                <Spin tip="Waiting..." size="large" spinning={isInProgress(status) && shouldWait}>
-                    <div className='wrapper'>
-                        <Row gutter={[16, 16]}>
-                            <Col span={3}>
-                                <img className='hero sc' src={'sc.png'} />
-                            </Col>
-                            <Col span={18}>
-                                {this.renderBoard()}
-                            </Col>
-                            <Col span={3} style={{marginLeft: '-30px'}}>
-                                <img className='hero sz' src={'sz.png'} />
-                            </Col>
-                        </Row>
-                    </div>
-                </Spin>
-            </React.Fragment>}
+            {error && this.renderError()}
+            {!error && <Spin tip="Loading game data..." spinning={loading}>
+                <Alert message={`Hi ${playerName}!`} type="success"/>
+                {isWaiting(status) && this.renderWaitingBlock()}
+                {isFinished(status) && this.renderGameOver()}
+                {!isWaiting(status) && <React.Fragment>
+                    <Divider/>
+                    {isInProgress(status) && this.renderTurnHint()}
+                    <Spin tip="Waiting..." size="large" spinning={isInProgress(status) && shouldWait }>
+                        <div className='wrapper'>
+                            <Row gutter={[16, 16]}>
+                                <Col span={3}>
+                                    <img className='hero sc' alt={'Scorpion'} src={'/sc.png'}/>
+                                </Col>
+                                <Col span={18}>
+                                    {this.renderBoard()}
+                                </Col>
+                                <Col span={3} style={{marginLeft: '-30px'}}>
+                                    <img className='hero sz' alt={'Sub Zero'} src={'/sz.png'}/>
+                                </Col>
+                            </Row>
+                        </div>
+                    </Spin>
+                </React.Fragment>}
+            </Spin>
+            }
         </div>
     }
 }

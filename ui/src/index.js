@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import { Provider, ReactReduxContext } from 'react-redux';
 
-import { store } from './app.store';
+import configureStore from './app.store';
 import './index.css';
 import App from './App';
 
 ReactDOM.render(
-    <Provider store={store}><App/></Provider>,
+    <Provider store={configureStore()} context={ReactReduxContext}><App/></Provider>,
     document.getElementById('root')
 );

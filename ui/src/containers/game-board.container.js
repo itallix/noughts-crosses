@@ -1,17 +1,22 @@
 import {connect} from 'react-redux';
 import GameBoardComponent from '../components/game-board.component';
-import {gameTurnRequested, gameSession} from "../ducks/actions";
+import {gameTurnRequested, gameSession, boardLoaded} from "../ducks/actions";
 
 const mapStateToProps = state => {
-    const { gameId, isOwner, shouldWait, board, playerName, status, win } = state.ticTacReducer.session;
+    const { error, loading } = state.ticTacReducer;
+    const { isOwner, shouldWait, board, playerName, status, win } = state.ticTacReducer.session;
     return {
-        gameId, isOwner, shouldWait, board, playerName, status, win
+        error, loading, isOwner, shouldWait, board, playerName, status, win
     };
 };
 
 const mapDispatchToProps = dispatch => ({
-    onTurn: (row, col) => dispatch(gameTurnRequested({row, col})),
-    onRefresh: () => dispatch(gameSession.requested())
+    onInit: (gameId, playerId) => {
+        dispatch(gameSession.requested({gameId, playerId}));
+        dispatch(boardLoaded({gameId}));
+    },
+    onTurn: (gameId, playerId, row, col) => dispatch(gameTurnRequested({gameId, playerId, row, col})),
+    onRefresh: (gameId, playerId) => dispatch(gameSession.requested({gameId, playerId}))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameBoardComponent);

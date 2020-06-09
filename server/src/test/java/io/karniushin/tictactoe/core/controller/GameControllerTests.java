@@ -285,8 +285,23 @@ public class GameControllerTests {
                         fieldWithPath("win.seq[].x")
                                 .ignored(),
                         fieldWithPath("win.seq[].y")
-                                .ignored()
+                                .ignored(),
+                        fieldWithPath("playerName")
+                                .description("Name of the player asking for a game session state")
+                                .type(JsonFieldType.STRING),
+                        fieldWithPath("owner")
+                                .description("If the player is owner or not")
+                                .type(JsonFieldType.BOOLEAN)
                 )));
+    }
 
+    @Test
+    public void shouldFailToGetIfGameDoesntExist() throws Exception {
+        UUID gameId = UUID.randomUUID();
+        this.mockMvc.perform(get("/api/v1/tictac/{gameId}/{playerId}", gameId, UUID.randomUUID()))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(equalTo(format("Game with id [%s] doesn't exist", gameId))))
+                .andDo(document("get/doesNotExist", preprocessResponse(prettyPrint())));
     }
 }

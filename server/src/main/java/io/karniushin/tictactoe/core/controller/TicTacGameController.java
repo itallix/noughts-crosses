@@ -58,7 +58,8 @@ public class TicTacGameController {
     public GameStateView state(@PathVariable UUID gameId, @PathVariable UUID playerId) {
         GameSession session = gameService.getGame(gameId);
         return new GameStateView(
-            session.getBoard(), !session.canMakeTurn(playerId), session.getStatus(), session.getWin()
+            session.getBoard(), !session.canMakeTurn(playerId), session.getStatus(), session.getWin(), session.isOwner(playerId),
+                playerRegistry.getNameById(playerId)
         );
     }
 }

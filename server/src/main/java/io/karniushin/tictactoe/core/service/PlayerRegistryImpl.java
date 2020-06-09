@@ -4,6 +4,7 @@ import io.karniushin.tictactoe.core.domain.Player;
 
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -25,6 +26,6 @@ public class PlayerRegistryImpl implements PlayerRegistry {
 
     @Override
     public String getNameById(UUID id) {
-        return players.get(id).getUsername();
+        return Optional.ofNullable(players.get(id)).map(Player::getUsername).orElse("UNKNOWN");
     }
 }
