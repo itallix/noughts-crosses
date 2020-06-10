@@ -618,32 +618,64 @@ registered as an opponent in a specified game.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="http">PUT /api/v1/tictac/5d29b3a6-0907-4910-a943-a750ec15f1e9/connect/Evgeniy HTTP/1.1
+<pre class="CodeRay highlight nowrap"><code data-lang="http">PUT /api/v1/tictac/c2621fa1-1d92-42c0-a7ce-3afe6cf4454c/connect/Evgeniy HTTP/1.1
 Host: localhost:8080</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ curl 'http://localhost:8080/api/v1/tictac/5d29b3a6-0907-4910-a943-a750ec15f1e9/connect/Evgeniy' -i -X PUT</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">$ curl 'http://localhost:8080/api/v1/tictac/c2621fa1-1d92-42c0-a7ce-3afe6cf4454c/connect/Evgeniy' -i -X PUT</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ http PUT 'http://localhost:8080/api/v1/tictac/5d29b3a6-0907-4910-a943-a750ec15f1e9/connect/Evgeniy'</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">$ http PUT 'http://localhost:8080/api/v1/tictac/c2621fa1-1d92-42c0-a7ce-3afe6cf4454c/connect/Evgeniy'</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>You will receive a response with opponent player identifier:</p>
+<p>You will receive a response:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
-Content-Length: 38
+Content-Length: 74
 Content-Type: application/json;charset=UTF-8
 
-&quot;dc7e183c-d95e-4a0b-92ff-3e1860f605e8&quot;</code></pre>
+{
+  &quot;opponentId&quot; : &quot;a249021c-567f-4f3f-896c-b7b55fa7980c&quot;,
+  &quot;x&quot; : false
+}</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Response fields explained:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>opponentId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Identifies the opponent id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>x</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If the player&#8217;s turn rendered as a cross</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>If the requested game doesn&#8217;t exist:</p>
 </div>
@@ -651,9 +683,9 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 404 Not Found
 Content-Length: 65
-Content-Type: text/plain;charset=UTF-8
+Content-Type: text/plain
 
-Game with id [bb86f382-5cad-4e9e-ad0f-111da32a525d] doesn't exist</code></pre>
+Game with id [1b9d4387-cb70-482c-a188-732552a9334e] doesn't exist</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -663,9 +695,9 @@ Game with id [bb86f382-5cad-4e9e-ad0f-111da32a525d] doesn't exist</code></pre>
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 400 Bad Request
 Content-Length: 96
-Content-Type: text/plain;charset=UTF-8
+Content-Type: text/plain
 
-Opponent for the game with id [b3eb4beb-67bb-4abe-9cde-c40afef8079b] has been already registered</code></pre>
+Opponent for the game with id [04a5aec8-8f96-47f1-87fe-ab8cbc807fb4] has been already registered</code></pre>
 </div>
 </div>
 </div>

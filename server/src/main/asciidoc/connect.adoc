@@ -9,9 +9,13 @@ include::{snippets}/connect/http-request.adoc[]
 include::{snippets}/connect/curl-request.adoc[]
 include::{snippets}/connect/httpie-request.adoc[]
 
-You will receive a response with opponent player identifier:
+You will receive a response:
 
 include::{snippets}/connect/http-response.adoc[]
+
+Response fields explained:
+
+include::{snippets}/connect/response-fields.adoc[]
 
 If the requested game doesn't exist:
 

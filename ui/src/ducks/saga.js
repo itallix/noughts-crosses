@@ -18,8 +18,8 @@ export function* list() {
 export function* create({payload: {username, threshold, symbol}}) {
     console.log(`Creating new game with owner=${username} and threshold=${threshold}`);
     try {
-        const {gameId, ownerId} = yield call(createNewGame, username, threshold);
-        yield put(gameCreate.succeeded({gameId, ownerId, ownerName: username}));
+        const {gameId, ownerId} = yield call(createNewGame, username, threshold, symbol);
+        yield put(gameCreate.succeeded({ownerName: username, x: symbol}));
         yield put(push(`/${gameId}/${ownerId}`));
         yield call(connectSession, {payload: {gameId}});
         console.log(`Successfully created new game with id=${gameId} and ownerId=${ownerId}`);
@@ -31,8 +31,8 @@ export function* create({payload: {username, threshold, symbol}}) {
 
 export function* connect({payload: {gameId, username}}) {
     try {
-        const opponentId = yield call(connectToGame, gameId, username);
-        yield put(gameConnect.succeeded({gameId, opponentId, opponentName: username}));
+        const { opponentId, x } = yield call(connectToGame, gameId, username);
+        yield put(gameConnect.succeeded({opponentName: username, x}));
         yield put(push(`/${gameId}/${opponentId}`));
         yield call(connectSession, { payload: { gameId } });
         console.log(`Successfully connected to the game with id=${gameId} as ${username}`);

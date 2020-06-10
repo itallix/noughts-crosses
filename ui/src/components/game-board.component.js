@@ -24,7 +24,8 @@ export default class GameBoardComponent extends Component {
         board: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number.isRequired).isRequired),
         playerName: PropTypes.string,
         status: PropTypes.oneOf(Object.values(GameStatuses)),
-        win: WinResult
+        win: WinResult,
+        x: PropTypes.bool.isRequired
     };
 
     componentDidMount() {
@@ -92,6 +93,21 @@ export default class GameBoardComponent extends Component {
         </React.Fragment>);
     }
 
+    renderCell(value) {
+        const {isOwner, x} = this.props;
+
+        return (<React.Fragment>
+            {value === 1 && (
+                (isOwner && x || !isOwner && !x) && <CloseOutlined className='owner'/> ||
+                (isOwner && !x || !isOwner && x) && <CheckCircleOutlined className='owner'/>)
+            }
+            {value === -1 && (
+                (!isOwner && x || isOwner && !x) && <CloseOutlined className='opponent'/> ||
+                (!isOwner && !x || isOwner && x) && <CheckCircleOutlined className='opponent'/>)
+            }
+        </React.Fragment>)
+    }
+
     renderBoard() {
         const {board, gameId, isOwner, onTurn, playerId, status, shouldWait, win} = this.props;
 
@@ -116,8 +132,7 @@ export default class GameBoardComponent extends Component {
                                          onTurn(gameId, playerId, rdx, idx)
                                      }
                                  }}>
-                                {row[idx] === 1 && <CloseOutlined className='owner'/>}
-                                {row[idx] === -1 && <CheckCircleOutlined className='opponent'/>}
+                                {this.renderCell(row[idx])}
                             </div>
                         </Col>)
                     })}

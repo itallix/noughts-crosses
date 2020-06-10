@@ -11,15 +11,17 @@ public class GameStateView {
     private final WinResult win;
     private final boolean isOwner;
     private final String playerName;
+    private final boolean x;
 
     public GameStateView(final short[][] board, final boolean shouldWait, final GameStatus status, final WinResult win, final boolean isOwner,
-                         final String playerName) {
+                         final String playerName, final boolean x) {
         this.board = board;
         this.shouldWait = shouldWait;
         this.status = status;
         this.win = win;
         this.isOwner = isOwner;
         this.playerName = playerName;
+        this.x = x;
     }
 
     public short[][] getBoard() {
@@ -44,5 +46,9 @@ public class GameStateView {
 
     public String getPlayerName() {
         return playerName;
+    }
+
+    public boolean isX() {
+        return x;
     }
 }

@@ -635,7 +635,8 @@ $(addBlockSwitches);
 <p>For example:</p>
 </div>
 <div class="paragraph">
-<p><code>POST <a href="http://localhost:8081/api/v1/tictac/Daniel/10" class="bare">http://localhost:8081/api/v1/tictac/Daniel/10</a></code></p>
+<p><code>POST <a href="http://localhost:8081/api/v1/tictac/create" class="bare">http://localhost:8081/api/v1/tictac/create</a></code>
+<code>{'username': 'Daniel', 'threshold': 5, 'x': true}</code></p>
 </div>
 <div class="paragraph">
 <p><code>PUT <a href="http://localhost:8081/api/v1/tictac/ec9b87f6-54d7-4e89-bb7a-7406f7069d3d/connect/Robert" class="bare">http://localhost:8081/api/v1/tictac/ec9b87f6-54d7-4e89-bb7a-7406f7069d3d/connect/Robert</a></code></p>
@@ -712,7 +713,7 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 156
 
 [ {
-  &quot;gameId&quot; : &quot;d495f975-e88e-458a-b419-4e76def7f0f2&quot;,
+  &quot;gameId&quot; : &quot;6e491ba0-055c-48b4-a14c-7607edba0094&quot;,
   &quot;owner&quot; : &quot;Dennis&quot;,
   &quot;status&quot; : &quot;WAITING_FOR_OPPONENT&quot;,
   &quot;threshold&quot; : 10,
@@ -777,20 +778,20 @@ Content-Length: 156
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="http">GET /api/v1/tictac/7f6c522b-8e84-4f33-956b-c224d32361c8/6a348cf3-82a0-4f5e-aa05-43610fcd3dee HTTP/1.1
+<pre class="CodeRay highlight nowrap"><code data-lang="http">GET /api/v1/tictac/bfe1add7-d231-48f6-a1ce-30115492b7bf/0efe05af-af90-4b90-b516-1a6b9ae4aa10 HTTP/1.1
 Content-Type: application/json
 Host: localhost:8080</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ curl 'http://localhost:8080/api/v1/tictac/7f6c522b-8e84-4f33-956b-c224d32361c8/6a348cf3-82a0-4f5e-aa05-43610fcd3dee' -i -X GET \
+<pre class="CodeRay highlight"><code data-lang="bash">$ curl 'http://localhost:8080/api/v1/tictac/bfe1add7-d231-48f6-a1ce-30115492b7bf/0efe05af-af90-4b90-b516-1a6b9ae4aa10' -i -X GET \
     -H 'Content-Type: application/json'</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ http GET 'http://localhost:8080/api/v1/tictac/7f6c522b-8e84-4f33-956b-c224d32361c8/6a348cf3-82a0-4f5e-aa05-43610fcd3dee' \
+<pre class="CodeRay highlight"><code data-lang="bash">$ http GET 'http://localhost:8080/api/v1/tictac/bfe1add7-d231-48f6-a1ce-30115492b7bf/0efe05af-af90-4b90-b516-1a6b9ae4aa10' \
     'Content-Type:application/json'</code></pre>
 </div>
 </div>
@@ -800,7 +801,7 @@ Host: localhost:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
-Content-Length: 897
+Content-Length: 911
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -843,6 +844,7 @@ Content-Type: application/json;charset=UTF-8
     } ]
   },
   &quot;playerName&quot; : &quot;PlayerA&quot;,
+  &quot;x&quot; : true,
   &quot;owner&quot; : true
 }</code></pre>
 </div>
@@ -909,6 +911,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">If the player is owner or not</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>x</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If the player&#8217;s turn rendered as a cross</p></td>
+</tr>
 </tbody>
 </table>
 <div class="paragraph">
@@ -918,9 +925,9 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 404 Not Found
 Content-Length: 65
-Content-Type: text/plain;charset=UTF-8
+Content-Type: text/plain
 
-Game with id [095873fd-bf25-4cde-a6e0-278c236c8170] doesn't exist</code></pre>
+Game with id [318ee443-3c04-4ab7-bd5a-5db41617b5bc] doesn't exist</code></pre>
 </div>
 </div>
 </div>
@@ -937,22 +944,29 @@ Game with id [095873fd-bf25-4cde-a6e0-278c236c8170] doesn't exist</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="http">POST /api/v1/tictac/Vitalii/5 HTTP/1.1
-Host: localhost:8080</code></pre>
+<pre class="CodeRay highlight nowrap"><code data-lang="http">POST /api/v1/tictac/create HTTP/1.1
+Content-Length: 62
+Content-Type: application/json
+Host: localhost:8080
+
+{&quot;username&quot;:&quot;Vitalii&quot;,&quot;threshold&quot;:5,&quot;x&quot;:true,&quot;boardname&quot;:null}</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ curl 'http://localhost:8080/api/v1/tictac/Vitalii/5' -i -X POST</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">$ curl 'http://localhost:8080/api/v1/tictac/create' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -d '{&quot;username&quot;:&quot;Vitalii&quot;,&quot;threshold&quot;:5,&quot;x&quot;:true,&quot;boardname&quot;:null}'</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ http POST 'http://localhost:8080/api/v1/tictac/Vitalii/5'</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">$ echo '{&quot;username&quot;:&quot;Vitalii&quot;,&quot;threshold&quot;:5,&quot;x&quot;:true,&quot;boardname&quot;:null}' | http POST 'http://localhost:8080/api/v1/tictac/create' \
+    'Content-Type:application/json'</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>You receive a response:</p>
+<p>You will receive a response:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -961,8 +975,8 @@ Content-Length: 109
 Content-Type: application/json;charset=UTF-8
 
 {
-  &quot;gameId&quot; : &quot;5418eb17-826b-46ff-90ac-834c6e1d6cd9&quot;,
-  &quot;ownerId&quot; : &quot;d4813ed0-013f-489f-8007-640d87e96ba6&quot;
+  &quot;gameId&quot; : &quot;c05ac8ef-0645-47d2-8328-9cb06a2ecd1e&quot;,
+  &quot;ownerId&quot; : &quot;40ab6c41-bb0b-49bc-bfe8-1657c8992d37&quot;
 }</code></pre>
 </div>
 </div>
@@ -1009,32 +1023,64 @@ registered as an opponent in a specified game.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="http">PUT /api/v1/tictac/5d29b3a6-0907-4910-a943-a750ec15f1e9/connect/Evgeniy HTTP/1.1
+<pre class="CodeRay highlight nowrap"><code data-lang="http">PUT /api/v1/tictac/c2621fa1-1d92-42c0-a7ce-3afe6cf4454c/connect/Evgeniy HTTP/1.1
 Host: localhost:8080</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ curl 'http://localhost:8080/api/v1/tictac/5d29b3a6-0907-4910-a943-a750ec15f1e9/connect/Evgeniy' -i -X PUT</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">$ curl 'http://localhost:8080/api/v1/tictac/c2621fa1-1d92-42c0-a7ce-3afe6cf4454c/connect/Evgeniy' -i -X PUT</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ http PUT 'http://localhost:8080/api/v1/tictac/5d29b3a6-0907-4910-a943-a750ec15f1e9/connect/Evgeniy'</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">$ http PUT 'http://localhost:8080/api/v1/tictac/c2621fa1-1d92-42c0-a7ce-3afe6cf4454c/connect/Evgeniy'</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>You will receive a response with opponent player identifier:</p>
+<p>You will receive a response:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
-Content-Length: 38
+Content-Length: 74
 Content-Type: application/json;charset=UTF-8
 
-&quot;dc7e183c-d95e-4a0b-92ff-3e1860f605e8&quot;</code></pre>
+{
+  &quot;opponentId&quot; : &quot;a249021c-567f-4f3f-896c-b7b55fa7980c&quot;,
+  &quot;x&quot; : false
+}</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Response fields explained:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>opponentId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Identifies the opponent id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>x</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If the player&#8217;s turn rendered as a cross</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>If the requested game doesn&#8217;t exist:</p>
 </div>
@@ -1042,9 +1088,9 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 404 Not Found
 Content-Length: 65
-Content-Type: text/plain;charset=UTF-8
+Content-Type: text/plain
 
-Game with id [bb86f382-5cad-4e9e-ad0f-111da32a525d] doesn't exist</code></pre>
+Game with id [1b9d4387-cb70-482c-a188-732552a9334e] doesn't exist</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1054,9 +1100,9 @@ Game with id [bb86f382-5cad-4e9e-ad0f-111da32a525d] doesn't exist</code></pre>
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 400 Bad Request
 Content-Length: 96
-Content-Type: text/plain;charset=UTF-8
+Content-Type: text/plain
 
-Opponent for the game with id [b3eb4beb-67bb-4abe-9cde-c40afef8079b] has been already registered</code></pre>
+Opponent for the game with id [04a5aec8-8f96-47f1-87fe-ab8cbc807fb4] has been already registered</code></pre>
 </div>
 </div>
 </div>
@@ -1077,19 +1123,19 @@ Content-Type: application/json
 Content-Length: 111
 Host: localhost:8080
 
-{&quot;gameId&quot;:&quot;3e2b339e-80aa-4004-97e8-838628033438&quot;,&quot;playerId&quot;:&quot;a710806c-d24a-4ecb-ac4e-0646297e6380&quot;,&quot;x&quot;:0,&quot;y&quot;:9}</code></pre>
+{&quot;gameId&quot;:&quot;25ca2a7a-4332-4e75-a0ec-2ff697e4c616&quot;,&quot;playerId&quot;:&quot;5ad9dc14-497c-402a-8f32-f8fd0bfaf88b&quot;,&quot;x&quot;:0,&quot;y&quot;:9}</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="bash">$ curl 'http://localhost:8080/api/v1/tictac/turn' -i -X PUT \
     -H 'Content-Type: application/json' \
-    -d '{&quot;gameId&quot;:&quot;3e2b339e-80aa-4004-97e8-838628033438&quot;,&quot;playerId&quot;:&quot;a710806c-d24a-4ecb-ac4e-0646297e6380&quot;,&quot;x&quot;:0,&quot;y&quot;:9}'</code></pre>
+    -d '{&quot;gameId&quot;:&quot;25ca2a7a-4332-4e75-a0ec-2ff697e4c616&quot;,&quot;playerId&quot;:&quot;5ad9dc14-497c-402a-8f32-f8fd0bfaf88b&quot;,&quot;x&quot;:0,&quot;y&quot;:9}'</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ echo '{&quot;gameId&quot;:&quot;3e2b339e-80aa-4004-97e8-838628033438&quot;,&quot;playerId&quot;:&quot;a710806c-d24a-4ecb-ac4e-0646297e6380&quot;,&quot;x&quot;:0,&quot;y&quot;:9}' | http PUT 'http://localhost:8080/api/v1/tictac/turn' \
+<pre class="CodeRay highlight"><code data-lang="bash">$ echo '{&quot;gameId&quot;:&quot;25ca2a7a-4332-4e75-a0ec-2ff697e4c616&quot;,&quot;playerId&quot;:&quot;5ad9dc14-497c-402a-8f32-f8fd0bfaf88b&quot;,&quot;x&quot;:0,&quot;y&quot;:9}' | http PUT 'http://localhost:8080/api/v1/tictac/turn' \
     'Content-Type:application/json'</code></pre>
 </div>
 </div>
@@ -1107,8 +1153,8 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 400 Bad Request
-Content-Type: text/plain;charset=UTF-8
 Content-Length: 79
+Content-Type: text/plain
 
 Turn cannot be processed when position of any coordinate is not in range [0; 9]</code></pre>
 </div>
@@ -1120,7 +1166,7 @@ Turn cannot be processed when position of any coordinate is not in range [0; 9]<
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 400 Bad Request
 Content-Length: 50
-Content-Type: text/plain;charset=UTF-8
+Content-Type: text/plain
 
 Turn cannot be processed when cell is already busy</code></pre>
 </div>
@@ -1132,7 +1178,7 @@ Turn cannot be processed when cell is already busy</code></pre>
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 400 Bad Request
 Content-Length: 83
-Content-Type: text/plain;charset=UTF-8
+Content-Type: text/plain
 
 Turn cannot be processed for this player, waiting for another player to make a turn</code></pre>
 </div>
@@ -1144,7 +1190,7 @@ Turn cannot be processed for this player, waiting for another player to make a t
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 400 Bad Request
 Content-Length: 49
-Content-Type: text/plain;charset=UTF-8
+Content-Type: text/plain
 
 Turn cannot be processed with non registered user</code></pre>
 </div>

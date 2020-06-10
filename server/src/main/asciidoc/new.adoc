@@ -8,7 +8,7 @@ include::{snippets}/create/http-request.adoc[]
 include::{snippets}/create/curl-request.adoc[]
 include::{snippets}/create/httpie-request.adoc[]
 
-You receive a response:
+You will receive a response:
 
 include::{snippets}/create/http-response.adoc[]
 

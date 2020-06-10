@@ -163,7 +163,7 @@ export default class GameListComponent extends Component {
                     <InputNumber min={3} max={10}/>
                 </Form.Item>
                 <Form.Item label="Who are you?">
-                    <Switch checkedChildren="x" unCheckedChildren="o" checked={symbol} disabled
+                    <Switch checkedChildren="x" unCheckedChildren="o" checked={symbol}
                             onChange={checked => this.setState({form: {username, symbol: checked, threshold}})}/>
                 </Form.Item>
             </Form>
@@ -284,7 +284,7 @@ export default class GameListComponent extends Component {
                                       </List.Item>
                                   )
                               }}
-                        />}
+                        />
                         {this.renderConnectModal()}
                     </div>
                 </React.Fragment>}

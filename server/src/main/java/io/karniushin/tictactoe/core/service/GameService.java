@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface GameService {
 
-    GameSession newGame(String username, Integer threshold);
+    GameSession newGame(String username, Integer threshold, boolean isX);
 
     GameSession connect(UUID gameId, String username);
 

@@ -622,19 +622,19 @@ Content-Type: application/json
 Content-Length: 111
 Host: localhost:8080
 
-{&quot;gameId&quot;:&quot;3e2b339e-80aa-4004-97e8-838628033438&quot;,&quot;playerId&quot;:&quot;a710806c-d24a-4ecb-ac4e-0646297e6380&quot;,&quot;x&quot;:0,&quot;y&quot;:9}</code></pre>
+{&quot;gameId&quot;:&quot;25ca2a7a-4332-4e75-a0ec-2ff697e4c616&quot;,&quot;playerId&quot;:&quot;5ad9dc14-497c-402a-8f32-f8fd0bfaf88b&quot;,&quot;x&quot;:0,&quot;y&quot;:9}</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="bash">$ curl 'http://localhost:8080/api/v1/tictac/turn' -i -X PUT \
     -H 'Content-Type: application/json' \
-    -d '{&quot;gameId&quot;:&quot;3e2b339e-80aa-4004-97e8-838628033438&quot;,&quot;playerId&quot;:&quot;a710806c-d24a-4ecb-ac4e-0646297e6380&quot;,&quot;x&quot;:0,&quot;y&quot;:9}'</code></pre>
+    -d '{&quot;gameId&quot;:&quot;25ca2a7a-4332-4e75-a0ec-2ff697e4c616&quot;,&quot;playerId&quot;:&quot;5ad9dc14-497c-402a-8f32-f8fd0bfaf88b&quot;,&quot;x&quot;:0,&quot;y&quot;:9}'</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ echo '{&quot;gameId&quot;:&quot;3e2b339e-80aa-4004-97e8-838628033438&quot;,&quot;playerId&quot;:&quot;a710806c-d24a-4ecb-ac4e-0646297e6380&quot;,&quot;x&quot;:0,&quot;y&quot;:9}' | http PUT 'http://localhost:8080/api/v1/tictac/turn' \
+<pre class="CodeRay highlight"><code data-lang="bash">$ echo '{&quot;gameId&quot;:&quot;25ca2a7a-4332-4e75-a0ec-2ff697e4c616&quot;,&quot;playerId&quot;:&quot;5ad9dc14-497c-402a-8f32-f8fd0bfaf88b&quot;,&quot;x&quot;:0,&quot;y&quot;:9}' | http PUT 'http://localhost:8080/api/v1/tictac/turn' \
     'Content-Type:application/json'</code></pre>
 </div>
 </div>
@@ -652,8 +652,8 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 400 Bad Request
-Content-Type: text/plain;charset=UTF-8
 Content-Length: 79
+Content-Type: text/plain
 
 Turn cannot be processed when position of any coordinate is not in range [0; 9]</code></pre>
 </div>
@@ -665,7 +665,7 @@ Turn cannot be processed when position of any coordinate is not in range [0; 9]<
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 400 Bad Request
 Content-Length: 50
-Content-Type: text/plain;charset=UTF-8
+Content-Type: text/plain
 
 Turn cannot be processed when cell is already busy</code></pre>
 </div>
@@ -677,7 +677,7 @@ Turn cannot be processed when cell is already busy</code></pre>
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 400 Bad Request
 Content-Length: 83
-Content-Type: text/plain;charset=UTF-8
+Content-Type: text/plain
 
 Turn cannot be processed for this player, waiting for another player to make a turn</code></pre>
 </div>
@@ -689,7 +689,7 @@ Turn cannot be processed for this player, waiting for another player to make a t
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 400 Bad Request
 Content-Length: 49
-Content-Type: text/plain;charset=UTF-8
+Content-Type: text/plain
 
 Turn cannot be processed with non registered user</code></pre>
 </div>

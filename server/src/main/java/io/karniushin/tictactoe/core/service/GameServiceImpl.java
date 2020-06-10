@@ -44,9 +44,10 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public GameSession newGame(String username, Integer threshold) {
+    public GameSession newGame(String username, Integer threshold, boolean isX) {
         Player initiator = playerRegistry.registerPlayer(username);
         GameSession session = new GameSession(initiator.getId(), threshold);
+        session.setOwnerX(isX);
         games.put(session.getId(), session);
         locks.put(session.getId(), new ReentrantLock());
         msgSender.notifyGameCreated(session);
@@ -120,5 +121,6 @@ public class GameServiceImpl implements GameService {
     public void clean() {
         this.games.clear();
         this.locks.clear();
+        this.playerRegistry.reset();
     }
 }

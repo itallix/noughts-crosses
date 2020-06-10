@@ -12,8 +12,8 @@ export function connectToGame(gameId, username) {
     return instance.put(`/${API_BASE_URL}/${gameId}/connect/${username}`).then(resp => resp.data);
 }
 
-export function createNewGame(username, threshold) {
-    return instance.post(`/${API_BASE_URL}/${username}/${threshold}`).then(resp => resp.data);
+export function createNewGame(username, threshold, x) {
+    return instance.post(`/${API_BASE_URL}/create`, {username, threshold, x}).then(resp => resp.data);
 }
 
 export function makeTurn(gameId, playerId, row, col) {

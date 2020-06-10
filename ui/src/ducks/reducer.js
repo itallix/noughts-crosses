@@ -12,7 +12,8 @@ export const defaultState = {
         playerName: null,
         status: null,
         lastTurn: null,
-        win: null
+        win: null,
+        x: true
     },
     loading: false,
     error: {
@@ -28,27 +29,29 @@ const reducer = handleActions({
         [gameList.failed]: (state, {payload: {msg, status}}) => ({...state, loading: false, error: { msg, status }}),
         [gameList.succeeded]: (state, {payload: {list}}) => ({...state, list, loading: false, error: noError()}),
 
-        [gameCreate.succeeded]: (state, {payload: {ownerName}}) => (
+        [gameCreate.succeeded]: (state, {payload: {ownerName, x}}) => (
             {
                 ...state,
                 session: {
                     ...state.session,
                     playerName: ownerName,
                     isOwner: true,
-                    status: GameStatuses.WAITING
+                    status: GameStatuses.WAITING,
+                    x
                 },
                 error: noError()
             }),
         [gameCreate.failed]: (state, {payload: {msg, status}}) => ({...state, loading: false, error: {msg, status}}),
 
-        [gameConnect.succeeded]: (state, {payload: {opponentName}}) => (
+        [gameConnect.succeeded]: (state, {payload: {opponentName, x}}) => (
             {
                 ...state,
                 session: {
                     ...state.session,
                     playerName: opponentName,
                     isOwner: false,
-                    status: GameStatuses.ACTIVE
+                    status: GameStatuses.ACTIVE,
+                    x
                 },
                 error: noError()
             }),

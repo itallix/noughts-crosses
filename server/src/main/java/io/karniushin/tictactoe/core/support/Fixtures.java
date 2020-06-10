@@ -46,7 +46,6 @@ public class Fixtures {
     public UUID ownerEndGameHorizontalSetup() {
         Player playerA = playerRegistry.registerPlayer("PlayerA");
         Player playerB = playerRegistry.registerPlayer("PlayerB");
-        playerRegistry.registerPlayer("PlayerA");
         short[][] board = new short[BOARD_DIMENSION][BOARD_DIMENSION];
         IntStream.range(0, 9).forEach(n -> board[0][n] = 1);
         return gameService.addGame(new GameSessionBuilder(playerA.getId(), board)

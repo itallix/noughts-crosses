@@ -28,6 +28,8 @@ public class GameSession {
 
     private long lastTurnDate;
 
+    private boolean isOwnerX = true;
+
     public GameSession(UUID ownerId) {
         this(ownerId, new short[BOARD_DIMENSION][BOARD_DIMENSION]);
     }
@@ -151,6 +153,14 @@ public class GameSession {
 
     public long getLastTurnDate() {
         return lastTurnDate;
+    }
+
+    public boolean isOwnerX() {
+        return isOwnerX;
+    }
+
+    public void setOwnerX(final boolean ownerX) {
+        isOwnerX = ownerX;
     }
 
     @Override

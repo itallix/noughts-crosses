@@ -2,6 +2,7 @@ package io.karniushin.tictactoe.core.controller;
 
 import java.util.UUID;
 import java.util.stream.IntStream;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,6 +19,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.karniushin.tictactoe.core.controller.view.ConnectedGameView;
+import io.karniushin.tictactoe.core.controller.view.CreateGameRequest;
 import io.karniushin.tictactoe.core.controller.view.CreatedGameView;
 import io.karniushin.tictactoe.core.controller.view.TurnRequest;
 import io.karniushin.tictactoe.core.domain.GameSession;
@@ -36,10 +39,12 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -80,9 +85,16 @@ public class GameControllerTests {
                 .build();
     }
 
+    @After
+    public void tearDown() {
+        this.gameService.clean();
+    }
+
     @Test
     public void shouldCreateNewGame() throws Exception {
-        String response = this.mockMvc.perform(post("/api/v1/tictac/{username}/{threshold}", "Vitalii", 5))
+        String response = this.mockMvc.perform(post("/api/v1/tictac/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(new CreateGameRequest("Vitalii", 5, true))))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("create", preprocessResponse(prettyPrint()),
@@ -105,11 +117,21 @@ public class GameControllerTests {
     @Test
     public void shouldConnectToNewGame() throws Exception {
         UUID gameId = fixtures.initialSetupWithoutOpponent();
-        this.mockMvc.perform(put("/api/v1/tictac/{gameId}/connect/{username}", gameId, "Evgeniy"))
+        String response = this.mockMvc.perform(put("/api/v1/tictac/{gameId}/connect/{username}", gameId, "Evgeniy"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("connect", preprocessResponse(prettyPrint())
-        ));
+                .andDo(document("connect", preprocessResponse(prettyPrint()),
+                        responseFields(fieldWithPath("opponentId")
+                                        .description("Identifies the opponent id")
+                                        .type(JsonFieldType.STRING),
+                                fieldWithPath("x")
+                                        .description("If the player's turn rendered as a cross")
+                                        .type(JsonFieldType.BOOLEAN)
+                        )
+                )).andReturn().getResponse().getContentAsString();
+
+        ConnectedGameView view = objectMapper.readValue(response, ConnectedGameView.class);
+        assertFalse(view.isX());
         GameSession session = gameService.getGame(gameId);
         assertTrue(session.isInProgress());
         assertNotNull(session.getOpponentId());
@@ -209,8 +231,7 @@ public class GameControllerTests {
 
     @Test
     public void shouldListGames() throws Exception {
-        gameService.clean();
-        GameSession session = gameService.newGame("Dennis", 10);
+        GameSession session = gameService.newGame("Dennis", 10, true);
 
         this.mockMvc.perform(get("/api/v1/tictac/list")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -291,6 +312,9 @@ public class GameControllerTests {
                                 .type(JsonFieldType.STRING),
                         fieldWithPath("owner")
                                 .description("If the player is owner or not")
+                                .type(JsonFieldType.BOOLEAN),
+                        fieldWithPath("x")
+                                .description("If the player's turn rendered as a cross")
                                 .type(JsonFieldType.BOOLEAN)
                 )));
     }

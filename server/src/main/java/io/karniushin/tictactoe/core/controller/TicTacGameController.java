@@ -26,16 +26,16 @@ public class TicTacGameController {
         this.playerRegistry = playerRegistry;
     }
 
-    @PostMapping("/{username}/{threshold}")
-    public CreatedGameView createNewGame(@PathVariable String username, @PathVariable Integer threshold) {
-        GameSession session = gameService.newGame(username, threshold);
+    @PostMapping("/create")
+    public CreatedGameView createNewGame(@RequestBody CreateGameRequest createRequest) {
+        GameSession session = gameService.newGame(createRequest.getUsername(), createRequest.getThreshold(), createRequest.isX());
         return new CreatedGameView(session.getId(), session.getOwnerId());
     }
 
     @PutMapping("/{gameId}/connect/{username}")
-    public UUID connectToGame(@PathVariable UUID gameId, @PathVariable String username) {
+    public ConnectedGameView connectToGame(@PathVariable UUID gameId, @PathVariable String username) {
         GameSession session = gameService.connect(gameId, username);
-        return session.getOpponentId();
+        return new ConnectedGameView(session.getOpponentId(), !session.isOwnerX());
     }
 
     @PutMapping(value = "/turn")
@@ -57,9 +57,10 @@ public class TicTacGameController {
     @GetMapping("/{gameId}/{playerId}")
     public GameStateView state(@PathVariable UUID gameId, @PathVariable UUID playerId) {
         GameSession session = gameService.getGame(gameId);
+        boolean isOwner = session.isOwner(playerId);
         return new GameStateView(
-            session.getBoard(), !session.canMakeTurn(playerId), session.getStatus(), session.getWin(), session.isOwner(playerId),
-                playerRegistry.getNameById(playerId)
+            session.getBoard(), !session.canMakeTurn(playerId), session.getStatus(), session.getWin(), isOwner,
+                playerRegistry.getNameById(playerId), isOwner == session.isOwnerX()
         );
     }
 }
