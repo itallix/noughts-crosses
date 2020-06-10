@@ -14,9 +14,7 @@ const App = () => <ConnectedRouter history={history} context={ReactReduxContext}
         <Route exact path="/">
             <GameListContainer/>
         </Route>
-        <Route path="/:gameId/:playerId" render={props =>
-            <GameBoardContainer gameId={props.match.params.gameId} playerId={props.match.params.playerId}/>
-        }/>
+        <Route path="/:gameId/:playerId" render={props => <GameBoardContainer {...props.match.params} />}/>
     </Switch>
 </ConnectedRouter>;
 

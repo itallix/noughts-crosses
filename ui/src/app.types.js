@@ -29,3 +29,8 @@ export const WinResult = PropTypes.shape({
     who: PropTypes.number.isRequired,
     seq: PropTypes.arrayOf(Coord).isRequired
 });
+
+export const Error = PropTypes.shape({
+    msg: PropTypes.string,
+    status: PropTypes.number
+});

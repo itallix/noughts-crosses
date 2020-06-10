@@ -1,10 +1,8 @@
-import {eventChannel} from 'redux-saga';
-import {all, call, put, take, takeLatest} from 'redux-saga/effects';
+import {all, call, put, takeLatest} from 'redux-saga/effects';
 import {connectToGame, createNewGame, getGameState, listGameSessions, makeTurn} from '../app.service';
-import {boardLoaded, dashboardLoaded, dashboardSync, gameConnect, gameCreate, gameList, gameSession, gameSessionSync, gameTurnRequested} from "./actions";
-import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
+import {boardLoaded, dashboardLoaded, gameConnect, gameCreate, gameList, gameSession, gameTurnRequested} from "./actions";
 import {push} from 'connected-react-router';
+import {connectDashboard, connectSession} from "./ws-saga";
 
 export function* list() {
     try {
@@ -13,7 +11,7 @@ export function* list() {
         console.log('Successfully loaded list of the games', sessions);
     } catch (e) {
         console.warn('Failed to load list of the games', e);
-        yield put(gameList.failed());
+        yield put(gameList.failed({msg: e.response.data, status: e.response.status}));
     }
 }
 
@@ -23,11 +21,11 @@ export function* create({payload: {username, threshold, symbol}}) {
         const {gameId, ownerId} = yield call(createNewGame, username, threshold);
         yield put(gameCreate.succeeded({gameId, ownerId, ownerName: username}));
         yield put(push(`/${gameId}/${ownerId}`));
-        yield call(connectSession, { payload: { gameId } });
+        yield call(connectSession, {payload: {gameId}});
         console.log(`Successfully created new game with id=${gameId} and ownerId=${ownerId}`);
     } catch (e) {
-        console.warn('Failed to create new game', e);
-        yield put(gameCreate.failed());
+        console.warn('Failed to create new game', e.response);
+        yield put(gameCreate.failed({msg: e.response.data, status: e.response.status}));
     }
 }
 
@@ -40,7 +38,7 @@ export function* connect({payload: {gameId, username}}) {
         console.log(`Successfully connected to the game with id=${gameId} as ${username}`);
     } catch (e) {
         console.warn(`Failed to connect to the game with id = ${gameId} `, e);
-        yield put(gameConnect.failed());
+        yield put(gameConnect.failed({msg: e.response.data, status: e.response.status}));
     }
 }
 
@@ -49,7 +47,7 @@ export function* turn({payload: {gameId, playerId, row, col}}) {
         yield call(makeTurn, gameId, playerId, row, col);
     } catch (e) {
         console.warn(`Cannot process turn for game with id = ${gameId} `, e);
-        yield put(gameConnect.failed());
+        yield put(gameConnect.failed({msg: e.response.data, status: e.response.status}));
     }
 }
 
@@ -60,22 +58,8 @@ export function* get({payload: {gameId, playerId}}) {
         console.log(`Successfully loaded game state of the session with id=${gameId}`, gameState);
     } catch (e) {
         console.warn(`Cannot get game state with gameId = ${gameId} and playerId = ${playerId}`, e);
-        yield put(gameSession.failed());
+        yield put(gameSession.failed({msg: e.response.data, status: e.response.status}));
     }
-}
-
-export function* connectDashboard() {
-    if (sessionSubscription !== null) {
-        sessionSubscription.unsubscribe();
-    }
-    yield call(wsDashboardSaga);
-}
-
-export function* connectSession({payload: { gameId }}) {
-    if (dashboardSubscription !== null) {
-        dashboardSubscription.unsubscribe();
-    }
-    yield call(wsSessionSaga, gameId);
 }
 
 export default function* listSaga() {
@@ -88,64 +72,4 @@ export default function* listSaga() {
         takeLatest([dashboardLoaded], connectDashboard),
         takeLatest([boardLoaded], connectSession)
     ]);
-}
-
-let stompClient = null;
-let dashboardSubscription = null;
-let sessionSubscription = null;
-
-function initSessionWs(gameId) {
-    return eventChannel(emitter => {
-        const socket = new SockJS('/ws');
-        stompClient = Stomp.over(socket);
-        stompClient.connect({}, frame => {
-            console.log('Connected: ' + frame);
-            sessionSubscription = stompClient.subscribe(`/topic/${gameId}`, e => {
-                const body = e.body;
-                if (body) {
-                    return emitter(gameSessionSync(JSON.parse(body)));
-                }
-            });
-        });
-        return () => {
-            console.log('Session disconnected');
-        }
-    })
-}
-
-function* wsSessionSaga(gameId) {
-    const channel = yield call(initSessionWs, gameId)
-    while (true) {
-        const action = yield take(channel)
-        console.log('Action', action);
-        yield put(action)
-    }
-}
-
-function initDashboardWs() {
-    return eventChannel(emitter => {
-        const socket = new SockJS('/ws');
-        stompClient = Stomp.over(socket);
-        stompClient.connect({}, frame => {
-            console.log('Connected: ' + frame);
-            dashboardSubscription = stompClient.subscribe('/topic/games', e => {
-                const body = e.body;
-                if (body) {
-                    return emitter(dashboardSync(JSON.parse(body)));
-                }
-            });
-        });
-        return () => {
-            console.log('Dashboard disconnected');
-        }
-    })
-}
-
-function* wsDashboardSaga() {
-    const channel = yield call(initDashboardWs)
-    while (true) {
-        const action = yield take(channel)
-        console.log('Action', action);
-        yield put(action)
-    }
 }

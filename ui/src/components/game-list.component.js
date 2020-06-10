@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {Avatar, Badge, Button, Divider, Drawer, Form, Input, InputNumber, List, Modal, Result, Skeleton, Switch, Tag, Tooltip} from 'antd';
+import {Avatar, Badge, Button, Divider, Drawer, Form, Input, InputNumber, List, Modal, Skeleton, Switch, Tag, Tooltip} from 'antd';
 import {ClockCircleOutlined, MinusCircleOutlined, PlusOutlined, ReloadOutlined, SyncOutlined, UserOutlined} from '@ant-design/icons';
 
-import {GameSession, GameStatuses} from '../app.types';
-import {isWaiting} from '../app.utils';
+import {Error, GameSession, GameStatuses} from '../app.types';
+import {isWaiting, render400, render500} from '../app.utils';
 import "./game-list.component.scss";
 
 const getDescriptionByStatus = status => {
@@ -23,7 +23,7 @@ const getDescriptionByStatus = status => {
 export default class GameListComponent extends Component {
 
     static propTypes = {
-        error: PropTypes.bool.isRequired,
+        error: Error,
         list: PropTypes.arrayOf(GameSession),
         loading: PropTypes.bool.isRequired,
         onConnect: PropTypes.func.isRequired,
@@ -49,7 +49,8 @@ export default class GameListComponent extends Component {
     }
 
     componentDidMount() {
-        this.props.onInit();
+        const {onInit} = this.props;
+        onInit();
     }
 
     showModal = (gameId) => {
@@ -71,6 +72,7 @@ export default class GameListComponent extends Component {
     handleConnect = () => {
         const {gameId, playerName} = this.state;
         this.props.onConnect(gameId, playerName);
+        this.hideModal();
     };
 
     handleCreate = () => {
@@ -81,7 +83,7 @@ export default class GameListComponent extends Component {
     }
 
     showDrawer = () => {
-        const { username, threshold } = this.state.form;
+        const {username, threshold} = this.state.form;
         if (this.formRef.current) {
             this.formRef.current.setFieldsValue({
                 username: username,
@@ -108,13 +110,11 @@ export default class GameListComponent extends Component {
     renderError() {
         const {error, onReload} = this.props;
 
+        const tryAgainBtn = <Button type="primary" onClick={onReload}>Try Again</Button>;
+
         return (<React.Fragment>
-            {error && <Result
-                status="500"
-                title="500"
-                subTitle="Sorry, something went wrong."
-                extra={<Button type="primary" onClick={onReload}>Try Again</Button>}
-            />}
+            {error.status === 400 && render400(error.msg, tryAgainBtn)}
+            {error.status === 500 && render500(error.msg, tryAgainBtn)}
         </React.Fragment>)
     }
 
@@ -160,11 +160,11 @@ export default class GameListComponent extends Component {
                     <Input placeholder="Enter username" prefix={<UserOutlined/>}/>
                 </Form.Item>
                 <Form.Item label="Win threshold" name="threshold">
-                    <InputNumber min={3} max={10} />
+                    <InputNumber min={3} max={10}/>
                 </Form.Item>
                 <Form.Item label="Who are you?">
                     <Switch checkedChildren="x" unCheckedChildren="o" checked={symbol} disabled
-                            onChange={checked => this.setState({form: {username, symbol: checked, threshold }})}/>
+                            onChange={checked => this.setState({form: {username, symbol: checked, threshold}})}/>
                 </Form.Item>
             </Form>
         </Drawer>)
@@ -200,25 +200,25 @@ export default class GameListComponent extends Component {
         switch (status) {
             case GameStatuses.WAITING:
                 return (
-                    <Tag icon={<ClockCircleOutlined />} color="success">
+                    <Tag icon={<ClockCircleOutlined/>} color="success">
                         waiting
                     </Tag>
                 );
             case GameStatuses.ACTIVE:
                 return (
-                    <Tag icon={<SyncOutlined spin />} color="processing">
+                    <Tag icon={<SyncOutlined spin/>} color="processing">
                         in progress
                     </Tag>
                 );
             case GameStatuses.FINISHED:
                 return (
-                    <Tag icon={<MinusCircleOutlined />} color="default">
+                    <Tag icon={<MinusCircleOutlined/>} color="default">
                         finished
                     </Tag>
                 );
             default:
                 return (
-                    <Tag icon={<MinusCircleOutlined />} color="error">
+                    <Tag icon={<MinusCircleOutlined/>} color="error">
                         undefined
                     </Tag>
                 );
@@ -244,49 +244,50 @@ export default class GameListComponent extends Component {
         return (
             <React.Fragment>
                 {this.renderDrawer()}
-                <Button type="primary" onClick={this.showDrawer}>
-                    <PlusOutlined/> New game
-                </Button>
-                <div className='game-list'>
-                    {this.renderError()}
-                    {!error && <List
-                        dataSource={list}
-                        header={listHeader}
-                        loading={loading && !error}
-                        itemLayout="horizontal"
-                        renderItem={item => {
-                            const actions = [];
-                            if (isWaiting(item.status)) {
-                                actions.push(<a key="list-connect" onClick={() => this.showModal(item.gameId)}>connect</a>);
-                            }
-                            const title = <React.Fragment>
-                                {item.gameId}
-                                <Divider type="vertical" />
-                                {this.renderTagByStatus(item.status)}
-                            </React.Fragment>;
+                {error.status && this.renderError()}
+                {!error.status && <React.Fragment>
+                    <Button type="primary" onClick={this.showDrawer}>
+                        <PlusOutlined/> New game
+                    </Button>
+                    <div className='game-list'>
+                        <List dataSource={list}
+                              header={listHeader}
+                              loading={loading && !error}
+                              itemLayout="horizontal"
+                              renderItem={item => {
+                                  const actions = [];
+                                  if (isWaiting(item.status)) {
+                                      actions.push(<a key="list-connect" onClick={() => this.showModal(item.gameId)}>connect</a>);
+                                  }
+                                  const title = <React.Fragment>
+                                      {item.gameId}
+                                      <Divider type="vertical"/>
+                                      {this.renderTagByStatus(item.status)}
+                                  </React.Fragment>;
 
-                            return (
-                                <List.Item actions={actions}>
-                                    <Skeleton avatar title={false} loading={item.loading} active>
-                                        <List.Item.Meta
-                                            avatar={<Avatar src="mk.png"/>}
-                                            title={title}
-                                            description={getDescriptionByStatus(item.status)}
-                                        />
-                                        <Badge count={item.threshold} />
-                                        <Divider type="vertical" />
-                                        <div>owned by <strong>{item.owner}</strong></div>
-                                        <Divider type="vertical" />
-                                        {item.lastTurn > 0 && <div>
-                                            Last turn at <strong>{new Date(item.lastTurn).toLocaleString()}</strong>
-                                        </div>}
-                                    </Skeleton>
-                                </List.Item>
-                            )
-                        }}
-                    />}
-                    {this.renderConnectModal()}
-                </div>
+                                  return (
+                                      <List.Item actions={actions}>
+                                          <Skeleton avatar title={false} loading={item.loading} active>
+                                              <List.Item.Meta
+                                                  avatar={<Avatar src="mk.png"/>}
+                                                  title={title}
+                                                  description={getDescriptionByStatus(item.status)}
+                                              />
+                                              <Badge count={item.threshold}/>
+                                              <Divider type="vertical"/>
+                                              <div>owned by <strong>{item.owner}</strong></div>
+                                              <Divider type="vertical"/>
+                                              {item.lastTurn > 0 && <div>
+                                                  Last turn at <strong>{new Date(item.lastTurn).toLocaleString()}</strong>
+                                              </div>}
+                                          </Skeleton>
+                                      </List.Item>
+                                  )
+                              }}
+                        />}
+                        {this.renderConnectModal()}
+                    </div>
+                </React.Fragment>}
             </React.Fragment>
         )
     }

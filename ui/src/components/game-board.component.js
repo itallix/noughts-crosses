@@ -3,18 +3,19 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import {Alert, Button, Col, Divider, Result, Row, Spin} from 'antd';
 import {CheckCircleOutlined, CloseOutlined} from '@ant-design/icons';
+import {Link} from 'react-router-dom';
 
-import {GameStatuses, WinResult} from '../app.types';
+import {Error, GameStatuses, WinResult} from '../app.types';
 import "./game-board.component.scss";
-import {isFinished, isInProgress, isWaiting} from "../app.utils";
+import {isFinished, isInProgress, isWaiting, render400, render404} from "../app.utils";
 
 export default class GameBoardComponent extends Component {
 
     static propTypes = {
-        error: PropTypes.bool.isRequired,
+        error: Error,
         loading: PropTypes.bool.isRequired,
-        gameId: PropTypes.string.isRequired,
-        playerId: PropTypes.string.isRequired,
+        gameId: PropTypes.any.isRequired,
+        playerId: PropTypes.any.isRequired,
         shouldWait: PropTypes.bool.isRequired,
         isOwner: PropTypes.bool.isRequired,
         onInit: PropTypes.func.isRequired,
@@ -27,8 +28,10 @@ export default class GameBoardComponent extends Component {
     };
 
     componentDidMount() {
-        const {gameId, onInit, playerId} = this.props;
-        onInit(gameId, playerId);
+        const {error, gameId, onInit, playerId} = this.props;
+        if (!error.status) {
+            onInit(gameId, playerId);
+        }
     }
 
     renderWaitingBlock() {
@@ -126,13 +129,14 @@ export default class GameBoardComponent extends Component {
     renderError() {
         const {gameId, playerId, error, onRefresh} = this.props;
 
+        const controls = () => ([
+            <Button key={`btn-dashboard-${new Date().getTime()}`} type="dashed"><Link to={"/"}>Dashboard</Link></Button>,
+            <Button key={`btn-refresh-${new Date().getTime()}`} type="default" onClick={() => onRefresh(gameId, playerId)}>Try Again</Button>
+        ]);
+
         return (<React.Fragment>
-            {error && <Result
-                status="500"
-                title="500"
-                subTitle="Sorry, something went wrong."
-                extra={<Button type="primary" onClick={() => onRefresh(gameId, playerId)}>Try Again</Button>}
-            />}
+            {error.status === 404 && render404(error.msg, controls())}
+            {error.status === 400 && render400(error.msg, controls())}
         </React.Fragment>)
     }
 
@@ -140,8 +144,8 @@ export default class GameBoardComponent extends Component {
         const {error, loading, playerName, shouldWait, status} = this.props;
 
         return <div className='game-board'>
-            {error && this.renderError()}
-            {!error && <Spin tip="Loading game data..." spinning={loading}>
+            {error.status && this.renderError()}
+            {!error.status && <Spin tip="Loading game data..." spinning={loading}>
                 <Alert message={`Hi ${playerName}!`} type="success"/>
                 {isWaiting(status) && this.renderWaitingBlock()}
                 {isFinished(status) && this.renderGameOver()}

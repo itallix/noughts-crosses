@@ -9,4 +9,6 @@ public interface PlayerRegistry {
     Player registerPlayer(String name);
 
     String getNameById(UUID id);
+
+    void reset();
 }

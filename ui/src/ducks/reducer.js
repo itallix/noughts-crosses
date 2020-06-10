@@ -15,13 +15,18 @@ export const defaultState = {
         win: null
     },
     loading: false,
-    error: false
+    error: {
+        msg: null,
+        status: null
+    }
 };
+
+const noError = () => ({ msg: null, status: null });
 
 const reducer = handleActions({
         [gameList.requested]: state => ({...state, loading: true}),
-        [gameList.failed]: state => ({...state, loading: false, error: true}),
-        [gameList.succeeded]: (state, {payload: {list}}) => ({...state, list, loading: false, error: false}),
+        [gameList.failed]: (state, {payload: {msg, status}}) => ({...state, loading: false, error: { msg, status }}),
+        [gameList.succeeded]: (state, {payload: {list}}) => ({...state, list, loading: false, error: noError()}),
 
         [gameCreate.succeeded]: (state, {payload: {ownerName}}) => (
             {
@@ -31,9 +36,10 @@ const reducer = handleActions({
                     playerName: ownerName,
                     isOwner: true,
                     status: GameStatuses.WAITING
-                }
+                },
+                error: noError()
             }),
-        [gameCreate.failed]: state => ({...state, loading: false, error: true}),
+        [gameCreate.failed]: (state, {payload: {msg, status}}) => ({...state, loading: false, error: {msg, status}}),
 
         [gameConnect.succeeded]: (state, {payload: {opponentName}}) => (
             {
@@ -43,9 +49,10 @@ const reducer = handleActions({
                     playerName: opponentName,
                     isOwner: false,
                     status: GameStatuses.ACTIVE
-                }
+                },
+                error: noError()
             }),
-        [gameConnect.failed]: state => ({...state, loading: false, error: true}),
+        [gameConnect.failed]: (state, {payload: {msg, status}}) => ({...state, loading: false, error: {msg, status}}),
 
         [gameSession.requested]: state => ({...state, loading: true}),
         [gameSession.succeeded]: (state, {payload: {board, status, shouldWait, win, owner, playerName}}) => (
@@ -56,9 +63,9 @@ const reducer = handleActions({
                     board, status, win, shouldWait, isOwner: owner, playerName
                 },
                 loading: false,
-                error: false
+                error: noError()
             }),
-        [gameSession.failed]: state => ({...state, loading: false, error: true}),
+        [gameSession.failed]: (state, {payload: {msg, status}}) => ({...state, loading: false, error: {msg, status}}),
         // WS messages:
         [dashboardSync]: (state, {payload: {type, gameId, status, lastTurn, owner, threshold}}) => (type === 'UPDATED' ? {
                     ...state,

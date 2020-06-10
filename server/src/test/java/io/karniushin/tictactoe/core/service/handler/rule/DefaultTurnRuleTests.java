@@ -13,6 +13,12 @@ import io.karniushin.tictactoe.core.domain.GameSession;
 import io.karniushin.tictactoe.core.domain.GameStatus;
 
 import static io.karniushin.tictactoe.core.domain.GameSession.BOARD_DIMENSION;
+import static io.karniushin.tictactoe.core.service.handler.rule.DefaultTurnRule.ANOTHER_PLAYER;
+import static io.karniushin.tictactoe.core.service.handler.rule.DefaultTurnRule.BUSY;
+import static io.karniushin.tictactoe.core.service.handler.rule.DefaultTurnRule.GAME_FINISHED;
+import static io.karniushin.tictactoe.core.service.handler.rule.DefaultTurnRule.NOT_IN_RANGE;
+import static io.karniushin.tictactoe.core.service.handler.rule.DefaultTurnRule.NOT_REGISTERED;
+import static io.karniushin.tictactoe.core.service.handler.rule.DefaultTurnRule.NO_OPPONENT_CONNECTED;
 import static java.util.UUID.randomUUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -49,7 +55,7 @@ public class DefaultTurnRuleTests {
         UUID ownerId = randomUUID();
         GameSession session = new GameSession(ownerId);
         expectedEx.expect(IllegalStateException.class);
-        expectedEx.expectMessage(DefaultTurnRule.NO_OPPONENT_CONNECTED);
+        expectedEx.expectMessage(NO_OPPONENT_CONNECTED);
         turn.execute(session, ownerId, 1, 1);
     }
 
@@ -61,7 +67,7 @@ public class DefaultTurnRuleTests {
                 .withStatus(GameStatus.FINISHED)
                 .build();
         expectedEx.expect(IllegalStateException.class);
-        expectedEx.expectMessage(DefaultTurnRule.GAME_FINISHED);
+        expectedEx.expectMessage(GAME_FINISHED);
         turn.execute(session, ownerId, 1, 1);
     }
 
@@ -71,7 +77,7 @@ public class DefaultTurnRuleTests {
                 .withOpponentId(randomUUID())
                 .build();
         expectedEx.expect(IllegalArgumentException.class);
-        expectedEx.expectMessage(DefaultTurnRule.NOT_REGISTERED);
+        expectedEx.expectMessage(NOT_REGISTERED);
         turn.execute(session, randomUUID(), 1, 1);
     }
 
@@ -84,7 +90,7 @@ public class DefaultTurnRuleTests {
                 .withOpponentTurnCount(4)
                 .build();
         expectedEx.expect(IllegalArgumentException.class);
-        expectedEx.expectMessage(DefaultTurnRule.ANOTHER_PLAYER);
+        expectedEx.expectMessage(ANOTHER_PLAYER);
         turn.execute(session, ownerId, 1, 1);
     }
 
@@ -97,7 +103,7 @@ public class DefaultTurnRuleTests {
                 .withOpponentTurnCount(5)
                 .build();
         expectedEx.expect(IllegalArgumentException.class);
-        expectedEx.expectMessage(DefaultTurnRule.ANOTHER_PLAYER);
+        expectedEx.expectMessage(ANOTHER_PLAYER);
         turn.execute(session, opponentId, 1, 1);
     }
 
@@ -108,7 +114,7 @@ public class DefaultTurnRuleTests {
                 .withOpponentId(randomUUID())
                 .build();
         expectedEx.expect(IllegalArgumentException.class);
-        expectedEx.expectMessage(DefaultTurnRule.NOT_IN_RANGE);
+        expectedEx.expectMessage(NOT_IN_RANGE);
         turn.execute(session, ownerId, 10, 2);
     }
 
@@ -121,7 +127,7 @@ public class DefaultTurnRuleTests {
                 .withOpponentId(opponentId)
                 .build();
         expectedEx.expect(IllegalArgumentException.class);
-        expectedEx.expectMessage(DefaultTurnRule.BUSY);
+        expectedEx.expectMessage(BUSY);
         turn.execute(session, opponentId, 1, 1);
     }
 }
