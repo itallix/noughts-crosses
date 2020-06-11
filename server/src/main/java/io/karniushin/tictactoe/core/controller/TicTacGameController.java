@@ -12,6 +12,8 @@ import io.karniushin.tictactoe.core.domain.GameSession;
 import io.karniushin.tictactoe.core.service.GameService;
 import io.karniushin.tictactoe.core.service.PlayerRegistry;
 
+import static java.util.Comparator.comparing;
+
 @RestController
 @RequestMapping(path = "/api/v1/tictac")
 public class TicTacGameController {
@@ -51,7 +53,7 @@ public class TicTacGameController {
             GameSessionView g = new GameSessionView(s.getId(), s.getName(), s.getStatus(), s.getThreshold(), s.getLastTurnDate());
             g.setOwner(playerRegistry.getNameById(s.getOwnerId()));
             return g;
-        }).collect(Collectors.toList());
+        }).sorted(comparing(GameSessionView::getLastTurn)).collect(Collectors.toList());
     }
 
     @GetMapping("/{gameId}/{playerId}")

@@ -3,7 +3,14 @@
   .refresh-btn, .dashboard-btn {
     position: absolute;
     top: 110px;
+  }
+
+  .dashboard-btn {
     right: 35px;
+  }
+
+  .refresh-btn {
+    right: 150px;
   }
 
   .wrapper {

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Avatar, Badge, Button, Divider, Drawer, Form, Input, InputNumber, List, Modal, Popover, Skeleton, Switch, Tag, Tooltip} from 'antd';
-import {ClockCircleOutlined, MinusCircleOutlined, PlusOutlined, ReloadOutlined, SyncOutlined, UserOutlined} from '@ant-design/icons';
+import {ClockCircleOutlined, MinusCircleOutlined, PlusOutlined, QuestionCircleOutlined, ReloadOutlined, SyncOutlined, UserOutlined} from '@ant-design/icons';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 import {Error, GameSession, GameStatuses} from '../app.types';
@@ -147,7 +147,7 @@ export default class GameListComponent extends Component {
             <Form
                 ref={this.formRef}
                 labelCol={{
-                    span: 4,
+                    span: 5,
                 }}
                 wrapperCol={{
                     span: 14,
@@ -169,10 +169,23 @@ export default class GameListComponent extends Component {
                 }]}>
                     <Input placeholder="Enter username" prefix={<UserOutlined/>}/>
                 </Form.Item>
-                <Form.Item label="Win threshold" name="threshold">
+                <Form.Item
+                    name="threshold"
+                    label={<span>
+                        Win threshold&nbsp;
+                        <Tooltip title="How many marks placed in a horizontal, vertical, or diagonal row to win the game? Might be any value from 3 to 10.">
+                            <QuestionCircleOutlined />
+                        </Tooltip>
+                    </span>}>
                     <InputNumber min={3} max={10}/>
                 </Form.Item>
-                <Form.Item label="Who are you?">
+                <Form.Item
+                    label={<span>
+                        Who are you?&nbsp;
+                        <Tooltip title="Do you prefer crosses or noughts?">
+                            <QuestionCircleOutlined />
+                        </Tooltip>
+                    </span>}>
                     <Switch checkedChildren="x" unCheckedChildren="o" checked={symbol}
                             onChange={checked => this.setState({form: {gameName, username, symbol: checked, threshold}})}/>
                 </Form.Item>

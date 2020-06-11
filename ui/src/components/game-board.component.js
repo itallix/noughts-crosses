@@ -101,6 +101,7 @@ export default class GameBoardComponent extends Component {
                 showIcon/>
             }
             <Button className='refresh-btn' type='dashed' onClick={() => onRefresh(gameId, playerId)}>Refresh</Button>
+            <Link to={'/'}><Button className='dashboard-btn' type='dashed'>Dashboard</Button></Link>
         </React.Fragment>);
     }
 
