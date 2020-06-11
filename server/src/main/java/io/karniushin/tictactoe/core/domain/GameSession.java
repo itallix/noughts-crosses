@@ -10,6 +10,8 @@ public class GameSession {
 
     private final UUID id;
 
+    private final String name;
+
     private final short[][] board;
 
     private final UUID ownerId;
@@ -31,22 +33,27 @@ public class GameSession {
     private boolean isOwnerX = true;
 
     public GameSession(UUID ownerId) {
-        this(ownerId, new short[BOARD_DIMENSION][BOARD_DIMENSION]);
+        this(ownerId, UUID.randomUUID().toString(), new short[BOARD_DIMENSION][BOARD_DIMENSION]);
     }
 
-    public GameSession(UUID ownerId, int threshold) {
-        this(ownerId, new short[BOARD_DIMENSION][BOARD_DIMENSION], threshold);
+    public GameSession(UUID ownerId, String name, int threshold) {
+        this(ownerId, name, new short[BOARD_DIMENSION][BOARD_DIMENSION], threshold);
     }
 
-    public GameSession(UUID ownerId, short[][] board) {
-        this(ownerId, board, BOARD_DIMENSION);
+    public GameSession(UUID ownerId, String name, short[][] board) {
+        this(ownerId, name, board, BOARD_DIMENSION);
     }
 
-    public GameSession(UUID ownerId, short[][] board, int threshold) {
+    public GameSession(UUID ownerId, String name, short[][] board, int threshold) {
         this.id = UUID.randomUUID();
+        this.name = name;
         this.ownerId = ownerId;
         this.board = board;
         this.threshold = Math.min(threshold, BOARD_DIMENSION);
+    }
+
+    public String getName() {
+        return name;
     }
 
     public UUID getOwnerId() {
@@ -180,6 +187,7 @@ public class GameSession {
 
         private final short[][] board;
         private final UUID ownerId;
+        private String name;
         private Integer threshold;
         private UUID opponentId;
         private GameStatus status;
@@ -188,11 +196,13 @@ public class GameSession {
 
         public GameSessionBuilder(UUID ownerId) {
             this.ownerId = ownerId;
+            this.name = UUID.randomUUID().toString();
             this.board = new short[BOARD_DIMENSION][BOARD_DIMENSION];
         }
 
         public GameSessionBuilder(UUID ownerId, short[][] board) {
             this.ownerId = ownerId;
+            this.name = UUID.randomUUID().toString();
             this.board = board;
         }
 
@@ -222,7 +232,7 @@ public class GameSession {
         }
 
         public GameSession build() {
-            GameSession session = new GameSession(ownerId, board);
+            GameSession session = new GameSession(ownerId, name, board);
             session.setOpponentId(opponentId);
             if (status != null) {
                 session.setStatus(status);

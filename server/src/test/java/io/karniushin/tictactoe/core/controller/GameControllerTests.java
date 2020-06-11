@@ -94,7 +94,7 @@ public class GameControllerTests {
     public void shouldCreateNewGame() throws Exception {
         String response = this.mockMvc.perform(post("/api/v1/tictac/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new CreateGameRequest("Vitalii", 5, true))))
+                .content(objectMapper.writeValueAsString(new CreateGameRequest("Vitalii", 5, true, "game1"))))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("create", preprocessResponse(prettyPrint()),
@@ -231,7 +231,7 @@ public class GameControllerTests {
 
     @Test
     public void shouldListGames() throws Exception {
-        GameSession session = gameService.newGame("Dennis", 10, true);
+        GameSession session = gameService.newGame("Dennis", "g1", 10, true);
 
         this.mockMvc.perform(get("/api/v1/tictac/list")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -245,6 +245,9 @@ public class GameControllerTests {
                                 .andWithPrefix("[].",
                                         fieldWithPath("gameId")
                                                 .description("Game unique identifier")
+                                                .type(JsonFieldType.STRING),
+                                        fieldWithPath("gameName")
+                                                .description("Name of the game")
                                                 .type(JsonFieldType.STRING),
                                         fieldWithPath("owner")
                                                 .description("Name of the player who owns the game session")
@@ -315,7 +318,10 @@ public class GameControllerTests {
                                 .type(JsonFieldType.BOOLEAN),
                         fieldWithPath("x")
                                 .description("If the player's turn rendered as a cross")
-                                .type(JsonFieldType.BOOLEAN)
+                                .type(JsonFieldType.BOOLEAN),
+                        fieldWithPath("gameName")
+                                .description("Name of the game")
+                                .type(JsonFieldType.STRING)
                 )));
     }
 

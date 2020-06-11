@@ -4,9 +4,9 @@ import {gameTurnRequested, gameSession, boardLoaded} from "../ducks/actions";
 
 const mapStateToProps = state => {
     const { error, loading } = state.ticTacReducer;
-    const { isOwner, shouldWait, board, playerName, status, win, x } = state.ticTacReducer.session;
+    const { gameName, isOwner, shouldWait, board, playerName, status, win, x } = state.ticTacReducer.session;
     return {
-        error, loading, isOwner, shouldWait, board, playerName, status, win, x
+        error, loading, gameName, isOwner, shouldWait, board, playerName, status, win, x
     };
 };
 

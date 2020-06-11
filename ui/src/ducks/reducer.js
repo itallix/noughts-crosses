@@ -13,7 +13,8 @@ export const defaultState = {
         status: null,
         lastTurn: null,
         win: null,
-        x: true
+        x: true,
+        gameName: null
     },
     loading: false,
     error: {
@@ -58,12 +59,12 @@ const reducer = handleActions({
         [gameConnect.failed]: (state, {payload: {msg, status}}) => ({...state, loading: false, error: {msg, status}}),
 
         [gameSession.requested]: state => ({...state, loading: true}),
-        [gameSession.succeeded]: (state, {payload: {board, status, shouldWait, win, owner, playerName}}) => (
+        [gameSession.succeeded]: (state, {payload: {board, gameName, status, shouldWait, win, owner, playerName, x}}) => (
             {
                 ...state,
                 session: {
                     ...state.session,
-                    board, status, win, shouldWait, isOwner: owner, playerName
+                    board, status, win, shouldWait, isOwner: owner, playerName, gameName, x
                 },
                 loading: false,
                 error: noError()
@@ -71,12 +72,12 @@ const reducer = handleActions({
         [gameSession.failed]: (state, {payload: {msg, status}}) => ({...state, loading: false, error: {msg, status}}),
 
         [gameStatus.requested]: state => ({...state, loading: true}),
-        [gameStatus.succeeded]: (state, {payload: {status, ownerName}}) => (
+        [gameStatus.succeeded]: (state, {payload: {status, ownerName, gameName}}) => (
             {
                 ...state,
                 session: {
                     ...state.session,
-                    status, playerName: ownerName
+                    status, playerName: ownerName, gameName
                 },
                 loading: false,
                 error: noError()

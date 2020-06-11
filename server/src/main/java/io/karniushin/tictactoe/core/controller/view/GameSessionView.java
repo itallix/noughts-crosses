@@ -6,22 +6,21 @@ import io.karniushin.tictactoe.core.domain.GameStatus;
 
 public class GameSessionView {
 
-    private UUID gameId;
+    private final UUID gameId;
+
+    private final String gameName;
 
     private String owner;
 
-    private GameStatus status;
+    private final GameStatus status;
 
-    private Integer threshold;
+    private final Integer threshold;
 
-    private Long lastTurn;
+    private final Long lastTurn;
 
-
-    public GameSessionView() {
-    }
-
-    public GameSessionView(final UUID gameId, final GameStatus status, final Integer threshold, final Long lastTurn) {
+    public GameSessionView(final UUID gameId, final String gameName, final GameStatus status, final Integer threshold, final Long lastTurn) {
         this.gameId = gameId;
+        this.gameName = gameName;
         this.status = status;
         this.threshold = threshold;
         this.lastTurn = lastTurn;
@@ -29,6 +28,10 @@ public class GameSessionView {
 
     public UUID getGameId() {
         return gameId;
+    }
+
+    public String getGameName() {
+        return gameName;
     }
 
     public String getOwner() {

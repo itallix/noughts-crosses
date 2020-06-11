@@ -64,8 +64,8 @@ export function* get({payload: {gameId, playerId}}) {
 
 export function* status({payload: {gameId}}) {
     try {
-        const {ownerName, status} = yield call(getGameStatus, gameId);
-        yield put(gameStatus.succeeded({ownerName, status}));
+        const {ownerName, gameName, status} = yield call(getGameStatus, gameId);
+        yield put(gameStatus.succeeded({ownerName, gameName, status}));
         console.log(`Successfully loaded game status of the session with id=${gameId}`);
     } catch (e) {
         console.warn(`Cannot get game status with gameId = ${gameId}`, e);

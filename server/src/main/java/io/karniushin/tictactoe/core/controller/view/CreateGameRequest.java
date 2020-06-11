@@ -8,20 +8,16 @@ public class CreateGameRequest {
 
     private boolean x;
 
-    private String boardname;
+    private String gameName;
 
     public CreateGameRequest() {
     }
 
-    public CreateGameRequest(final String username, final int threshold, final boolean x) {
+    public CreateGameRequest(final String username, final int threshold, final boolean x, final String gameName) {
         this.username = username;
         this.threshold = threshold;
         this.x = x;
-    }
-
-    public CreateGameRequest(final String username, final int threshold, final boolean x, final String boardname) {
-        this(username, threshold, x);
-        this.boardname = boardname;
+        this.gameName = gameName;
     }
 
     public String getUsername() {
@@ -36,7 +32,7 @@ public class CreateGameRequest {
         return x;
     }
 
-    public String getBoardname() {
-        return boardname;
+    public String getGameName() {
+        return gameName;
     }
 }

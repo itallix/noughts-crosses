@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {Avatar, Badge, Button, Divider, Drawer, Form, Input, InputNumber, List, Modal, Skeleton, Switch, Tag, Tooltip} from 'antd';
+import {Avatar, Badge, Button, Divider, Drawer, Form, Input, InputNumber, List, Modal, Popover, Skeleton, Switch, Tag, Tooltip} from 'antd';
 import {ClockCircleOutlined, MinusCircleOutlined, PlusOutlined, ReloadOutlined, SyncOutlined, UserOutlined} from '@ant-design/icons';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 import {Error, GameSession, GameStatuses} from '../app.types';
 import {isWaiting, render400, render500} from '../app.utils';
@@ -40,6 +41,7 @@ export default class GameListComponent extends Component {
             gameId: null,
             playerName: null,
             form: {
+                gameName: null,
                 username: null,
                 threshold: 5,
                 symbol: true
@@ -77,15 +79,16 @@ export default class GameListComponent extends Component {
 
     handleCreate = () => {
         const {onCreate} = this.props;
-        const {username, threshold, symbol} = this.state.form;
-        onCreate(username, threshold, symbol);
+        const {gameName, username, threshold, symbol} = this.state.form;
+        onCreate(gameName, username, threshold, symbol);
         this.hideDrawer();
     }
 
     showDrawer = () => {
-        const {username, threshold} = this.state.form;
+        const {gameName, username, threshold} = this.state.form;
         if (this.formRef.current) {
             this.formRef.current.setFieldsValue({
+                gameName: gameName,
                 username: username,
                 threshold: threshold
             });
@@ -100,6 +103,7 @@ export default class GameListComponent extends Component {
         this.setState({
             create: false,
             form: {
+                gameName: null,
                 username: null,
                 threshold: 5,
                 symbol: true
@@ -119,7 +123,7 @@ export default class GameListComponent extends Component {
     }
 
     renderDrawer() {
-        const {username, threshold, symbol} = this.state.form;
+        const {gameName, username, threshold, symbol} = this.state.form;
 
         return (<Drawer
             title="Create a new game"
@@ -149,11 +153,17 @@ export default class GameListComponent extends Component {
                     span: 14,
                 }}
                 initialValues={{
+                    'gameName': gameName,
                     'username': username,
                     'threshold': threshold
                 }}
                 onValuesChange={(val, all) => this.setState({form: {...all, symbol}})}
                 layout="horizontal">
+                <Form.Item label="Game name" name="gameName" rules={[{
+                    required: true
+                }]}>
+                    <Input placeholder="Enter name of the game"/>
+                </Form.Item>
                 <Form.Item label="Username" name="username" rules={[{
                     required: true
                 }]}>
@@ -164,7 +174,7 @@ export default class GameListComponent extends Component {
                 </Form.Item>
                 <Form.Item label="Who are you?">
                     <Switch checkedChildren="x" unCheckedChildren="o" checked={symbol}
-                            onChange={checked => this.setState({form: {username, symbol: checked, threshold}})}/>
+                            onChange={checked => this.setState({form: {gameName, username, symbol: checked, threshold}})}/>
                 </Form.Item>
             </Form>
         </Drawer>)
@@ -257,10 +267,15 @@ export default class GameListComponent extends Component {
                               renderItem={item => {
                                   const actions = [];
                                   if (isWaiting(item.status)) {
+                                      actions.push(<CopyToClipboard text={`${window.location.href}${item.gameId}`}>
+                                          <Popover trigger="click" content={<span>Game link copied!</span>}>
+                                              <a key="list-copy">link</a>
+                                          </Popover>
+                                      </CopyToClipboard>);
                                       actions.push(<a key="list-connect" onClick={() => this.showModal(item.gameId)}>connect</a>);
                                   }
                                   const title = <React.Fragment>
-                                      {item.gameId}
+                                      {item.gameName}
                                       <Divider type="vertical"/>
                                       {this.renderTagByStatus(item.status)}
                                   </React.Fragment>;

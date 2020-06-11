@@ -14,6 +14,7 @@ export default class GameConnectComponent extends Component {
         error: Error,
         gameId: PropTypes.string.isRequired,
         playerName: PropTypes.string,
+        gameName: PropTypes.string,
         status: PropTypes.oneOf(Object.values(GameStatuses)),
         onConnect: PropTypes.func.isRequired,
         onInit: PropTypes.func.isRequired
@@ -39,12 +40,12 @@ export default class GameConnectComponent extends Component {
     }
 
     renderInvite() {
-        const {playerName} = this.props;
+        const {gameName, playerName} = this.props;
         const {valid} = this.state;
 
         return (<Result
-            title="You have been invited to join the game!"
-            subTitle={`Please enter your name to start playing the game with ${playerName}`}
+            title={`You have been invited to join the game [${gameName}]!`}
+            subTitle={`Please enter your name to start playing this game with ${playerName}`}
             extra={
                 <Input
                     style={{width: '45%'}}
@@ -110,7 +111,7 @@ export default class GameConnectComponent extends Component {
         return <>
             {error.status && this.renderError()}
             {!error.status && status === GameStatuses.WAITING && this.renderInvite()}
-            {!error.status && this.renderCannotJoin()}
+            {!error.status && status !== GameStatuses.WAITING && this.renderCannotJoin()}
         </>
     }
 }

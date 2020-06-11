@@ -5,6 +5,7 @@ import io.karniushin.tictactoe.core.domain.WinResult;
 
 public class GameStateView {
 
+    private final String gameName;
     private final short[][] board;
     private final boolean shouldWait;
     private final GameStatus status;
@@ -13,8 +14,9 @@ public class GameStateView {
     private final String playerName;
     private final boolean x;
 
-    public GameStateView(final short[][] board, final boolean shouldWait, final GameStatus status, final WinResult win, final boolean isOwner,
-                         final String playerName, final boolean x) {
+    public GameStateView(final String gameName, final short[][] board, final boolean shouldWait, final GameStatus status, final WinResult win,
+                         final boolean isOwner, final String playerName, final boolean x) {
+        this.gameName = gameName;
         this.board = board;
         this.shouldWait = shouldWait;
         this.status = status;
@@ -22,6 +24,10 @@ public class GameStateView {
         this.isOwner = isOwner;
         this.playerName = playerName;
         this.x = x;
+    }
+
+    public String getGameName() {
+        return gameName;
     }
 
     public short[][] getBoard() {

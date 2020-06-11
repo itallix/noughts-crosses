@@ -28,7 +28,7 @@ public class TicTacGameController {
 
     @PostMapping("/create")
     public CreatedGameView createNewGame(@RequestBody CreateGameRequest createRequest) {
-        GameSession session = gameService.newGame(createRequest.getUsername(), createRequest.getThreshold(), createRequest.isX());
+        GameSession session = gameService.newGame(createRequest.getUsername(), createRequest.getGameName(), createRequest.getThreshold(), createRequest.isX());
         return new CreatedGameView(session.getId(), session.getOwnerId());
     }
 
@@ -48,7 +48,7 @@ public class TicTacGameController {
     public List<GameSessionView> listGames() {
         List<GameSession> sessions = gameService.list();
         return sessions.stream().map(s -> {
-            GameSessionView g = new GameSessionView(s.getId(), s.getStatus(), s.getThreshold(), s.getLastTurnDate());
+            GameSessionView g = new GameSessionView(s.getId(), s.getName(), s.getStatus(), s.getThreshold(), s.getLastTurnDate());
             g.setOwner(playerRegistry.getNameById(s.getOwnerId()));
             return g;
         }).collect(Collectors.toList());
@@ -59,7 +59,7 @@ public class TicTacGameController {
         GameSession session = gameService.getGame(gameId);
         boolean isOwner = session.isOwner(playerId);
         return new GameStateView(
-            session.getBoard(), !session.canMakeTurn(playerId), session.getStatus(), session.getWin(), isOwner,
+            session.getName(), session.getBoard(), !session.canMakeTurn(playerId), session.getStatus(), session.getWin(), isOwner,
                 playerRegistry.getNameById(playerId), isOwner == session.isOwnerX()
         );
     }
@@ -67,6 +67,6 @@ public class TicTacGameController {
     @GetMapping("/{gameId}")
     public GameStatusView status(@PathVariable UUID gameId) {
         GameSession session = gameService.getGame(gameId);
-        return new GameStatusView(playerRegistry.getNameById(session.getOwnerId()), session.getStatus());
+        return new GameStatusView(playerRegistry.getNameById(session.getOwnerId()), session.getName(), session.getStatus());
     }
 }

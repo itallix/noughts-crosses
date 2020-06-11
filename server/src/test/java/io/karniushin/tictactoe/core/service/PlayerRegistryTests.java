@@ -50,4 +50,11 @@ public class PlayerRegistryTests {
         expectedEx.expectMessage(String.format(PlayerRegistryImpl.PLAYER_EXISTS, "Alex"));
         playerRegistry.registerPlayer("Alex");
     }
+
+    @Test
+    public void shouldNotRegisterPlayerWithEmptyName() {
+        expectedEx.expect(IllegalArgumentException.class);
+        expectedEx.expectMessage(PlayerRegistryImpl.EMPTY_NAME);
+        playerRegistry.registerPlayer(null);
+    }
 }

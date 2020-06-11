@@ -16,6 +16,7 @@ export default class GameBoardComponent extends Component {
         error: Error,
         loading: PropTypes.bool.isRequired,
         gameId: PropTypes.string.isRequired,
+        gameName: PropTypes.string,
         playerId: PropTypes.string.isRequired,
         shouldWait: PropTypes.bool.isRequired,
         isOwner: PropTypes.bool.isRequired,
@@ -37,13 +38,13 @@ export default class GameBoardComponent extends Component {
     }
 
     renderWaitingBlock() {
-        const {gameId, onRefresh, playerId, playerName} = this.props;
+        const {gameId, gameName, onRefresh, playerId, playerName} = this.props;
 
         const url = window.location.href;
 
         return (<Result
             status="success"
-            title={`Hi ${playerName}! You've just successfully created the new game`}
+            title={`Hi ${playerName}! You've just successfully created the new game with name [${gameName}]`}
             subTitle={`Game id: ${gameId}. Please wait for opponent to join the game.`}
             extra={[
                 <CopyToClipboard text={url.substring(0, url.lastIndexOf("/"))}>
@@ -64,22 +65,22 @@ export default class GameBoardComponent extends Component {
         const {isOwner, win} = this.props;
 
         return (<React.Fragment>
-            <br/>
             {(isOwner && win.who === 1 || !isOwner && win.who === -1) &&
             <Alert
                 message="Game is Over"
-                description="Congratulations! You won the game! Refresh the browser window if you want to try your luck again."
+                description="Congratulations! You won the game! Go back to the dashboard if you want to try your luck again."
                 type="success"
                 showIcon
             /> ||
             (!isOwner && win.who === 1 || isOwner && win.who === -1) &&
             <Alert
                 message="Game is Over"
-                description="You lost the game! Refresh the browser window if you want to try your luck again."
+                description="You lost the game! Go back to the dashboard if you want to try your luck again."
                 type="error"
                 showIcon
             />
             }
+            <Link to={'/'}><Button className='dashboard-btn' type='dashed'>Dashboard</Button></Link>
         </React.Fragment>)
     }
 
@@ -168,17 +169,25 @@ export default class GameBoardComponent extends Component {
     }
 
     render() {
-        const {error, loading, playerName, shouldWait, status} = this.props;
+        const {error, loading, gameName, playerName, shouldWait, status} = this.props;
+
+        const intro = (status) => {
+            switch (status) {
+                case GameStatuses.FINISHED: return `[${gameName}] has been finished.`;
+                case GameStatuses.ACTIVE: return `[${gameName}] has begun.`;
+                default: return '';
+            }
+        }
 
         return <div className='game-board'>
             {error.status && this.renderError()}
             {!error.status && <Spin tip="Loading game data..." spinning={loading}>
                 {status && <React.Fragment>
-                    <Alert message={`Hi ${playerName}!`} type="success"/>
                     {isWaiting(status) && this.renderWaitingBlock()}
-                    {isFinished(status) && this.renderGameOver()}
                     {!isWaiting(status) && <React.Fragment>
+                        <Alert message={`Hi ${playerName}! ${intro(status)}`} type="success"/>
                         <Divider/>
+                        {isFinished(status) && this.renderGameOver()}
                         {isInProgress(status) && this.renderTurnHint()}
                         <Spin tip="Waiting..." size="large" spinning={isInProgress(status) && shouldWait}>
                             <div className='wrapper'>

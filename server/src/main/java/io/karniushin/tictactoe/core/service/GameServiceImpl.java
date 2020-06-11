@@ -19,11 +19,15 @@ import io.karniushin.tictactoe.core.service.handler.TurnHandler;
 import io.karniushin.tictactoe.core.service.msg.MessageSender;
 
 import static java.lang.String.format;
+import static org.apache.logging.log4j.util.Strings.isBlank;
 
 @Service
 public class GameServiceImpl implements GameService {
 
     private static final Logger logger = LoggerFactory.getLogger(GameServiceImpl.class);
+
+    public static final String GAME_EXISTS = "Game with name [%s] has been already created";
+    public static final String EMPTY_GAME_NAME = "Game name cannot be empty";
 
     private final ConcurrentMap<UUID, GameSession> games = new ConcurrentHashMap<>();
 
@@ -44,9 +48,10 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public GameSession newGame(String username, Integer threshold, boolean isX) {
+    public GameSession newGame(String username, String gameName, Integer threshold, boolean isX) {
+        validateGameName(gameName);
         Player initiator = playerRegistry.registerPlayer(username);
-        GameSession session = new GameSession(initiator.getId(), threshold);
+        GameSession session = new GameSession(initiator.getId(), gameName, threshold);
         session.setOwnerX(isX);
         games.put(session.getId(), session);
         locks.put(session.getId(), new ReentrantLock());
@@ -102,6 +107,16 @@ public class GameServiceImpl implements GameService {
         if (!games.containsKey(gameId)) {
             throw new GameNotFoundException(gameId);
         }
+    }
+
+    private void validateGameName(String gameName) {
+        if (isBlank(gameName)) {
+            throw new IllegalArgumentException(EMPTY_GAME_NAME);
+        }
+        games.values().stream()
+                .filter(g -> g.getName().equalsIgnoreCase(gameName))
+                .findAny()
+                .ifPresent(g -> { throw new IllegalArgumentException(String.format(GAME_EXISTS, g.getName())); });
     }
 
     @Override

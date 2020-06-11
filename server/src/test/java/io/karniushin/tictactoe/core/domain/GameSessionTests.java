@@ -36,7 +36,7 @@ public class GameSessionTests {
         UUID playerId = randomUUID();
         short[][] board = new short[10][10];
         board[1][1] = 1;
-        GameSession session = new GameSession(playerId, board);
+        GameSession session = new GameSession(playerId, randomUUID().toString(), board);
         assertFalse(session.isFree(1, 1));
         assertTrue(session.isFree(0, 0));
     }
