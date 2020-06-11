@@ -65,6 +65,14 @@ export default class GameBoardComponent extends Component {
         const {isOwner, win} = this.props;
 
         return (<React.Fragment>
+            {win.who === 0 &&
+            <Alert
+                message="Game is Over"
+                description="Draw! No winner this time! Go back to the dashboard if you want to try your luck again."
+                type="warning"
+                showIcon
+            />
+            }
             {(isOwner && win.who === 1 || !isOwner && win.who === -1) &&
             <Alert
                 message="Game is Over"

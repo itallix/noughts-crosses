@@ -13,7 +13,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
     onConnect: (gameId, username) => dispatch(gameConnect.requested({gameId, username})),
-    onCreate: (username, threshold, symbol) => dispatch(gameCreate.requested({username, threshold, symbol})),
+    onCreate: (gameName, username, threshold, symbol) => dispatch(gameCreate.requested({gameName, username, threshold, symbol})),
     onReload: () => dispatch(gameList.requested()),
     onInit: () => {
         dispatch(dashboardLoaded());

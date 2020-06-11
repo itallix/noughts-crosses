@@ -18,6 +18,8 @@ public class GameSessionView {
 
     private final Long lastTurn;
 
+    private String winner;
+
     public GameSessionView(final UUID gameId, final String gameName, final GameStatus status, final Integer threshold, final Long lastTurn) {
         this.gameId = gameId;
         this.gameName = gameName;
@@ -52,5 +54,13 @@ public class GameSessionView {
 
     public Integer getThreshold() {
         return threshold;
+    }
+
+    public String getWinner() {
+        return winner;
+    }
+
+    public void setWinner(final String winner) {
+        this.winner = winner;
     }
 }

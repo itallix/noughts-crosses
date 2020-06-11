@@ -308,6 +308,9 @@ export default class GameListComponent extends Component {
                                               {item.lastTurn > 0 && <div>
                                                   Last turn at <strong>{new Date(item.lastTurn).toLocaleString()}</strong>
                                               </div>}
+                                              <Divider type="vertical"/>
+                                              {item.winner && <span><strong>{item.winner}</strong> won</span>}
+                                              {!item.winner && item.status === GameStatuses.FINISHED && <span>No winner</span>}
                                           </Skeleton>
                                       </List.Item>
                                   )

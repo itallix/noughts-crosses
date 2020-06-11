@@ -66,4 +66,19 @@ public class Fixtures {
                 .build()
         );
     }
+
+    public UUID lastTurnSetup() {
+        Player playerA = playerRegistry.registerPlayer("Lucky");
+        short[][] board = new short[BOARD_DIMENSION][BOARD_DIMENSION];
+        for (int i = 0; i < BOARD_DIMENSION; i++) {
+            board[i] = i % 2 == 0 ? new short[] {-1, -1, -1, -1, -1, 1, 1, 1, 1, 1} : new short[] {1, 1, 1, 1, 1, -1, -1, -1, -1, -1};
+        }
+        board[9][9] = 0;
+        return gameService.addGame(new GameSessionBuilder(playerA.getId(), board)
+                .withName(String.format("mk1 - ownerId [%s]", playerA.getId().toString()))
+                .withOwnerTurnCount(49)
+                .withOpponentTurnCount(50)
+                .build()
+        );
+    }
 }

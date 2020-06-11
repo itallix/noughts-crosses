@@ -8,6 +8,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import io.karniushin.tictactoe.core.domain.GameSession;
+import io.karniushin.tictactoe.core.domain.WinResult;
 import io.karniushin.tictactoe.core.service.handler.rule.condition.*;
 
 @Component
@@ -31,6 +32,10 @@ public class DefaultEndGameRule implements GameRule {
                     .map(Optional::get)
                     .findFirst()
                     .ifPresent(session::setWin);
+        }
+        // detect draw
+        if (session.getWin() == null && session.getOwnerTurnCount() + session.getOpponentTurnCount() == threshold * threshold) {
+            session.setWin(new WinResult(null, (short) 0, null));
         }
     }
 }

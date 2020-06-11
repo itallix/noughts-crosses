@@ -12,8 +12,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import io.karniushin.tictactoe.core.domain.GameSession;
 import io.karniushin.tictactoe.core.domain.WinResult;
 
+import static io.karniushin.tictactoe.core.domain.GameSession.BOARD_DIMENSION;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith( SpringRunner.class )
@@ -27,7 +29,7 @@ public class DefaultEndGameRuleTests {
     public void shouldEndGameWhenHorizontalWinDetected() {
         UUID ownerId = UUID.randomUUID();
         UUID opponentId = UUID.randomUUID();
-        short[][] board = new short[10][10];
+        short[][] board = new short[BOARD_DIMENSION][BOARD_DIMENSION];
         board[2] = new short[]{0, -1, 0, 0, 1, 1, 1, 1, 1, 0};
         GameSession session = new GameSession.GameSessionBuilder(ownerId, board)
                 .withThreshold(5)
@@ -48,8 +50,8 @@ public class DefaultEndGameRuleTests {
     public void shouldEndGameWhenVerticalWinDetected() {
         UUID ownerId = UUID.randomUUID();
         UUID opponentId = UUID.randomUUID();
-        short[][] board = new short[10][10];
-        for (int i = 5; i < 10; i++) {
+        short[][] board = new short[BOARD_DIMENSION][BOARD_DIMENSION];
+        for (int i = 5; i < BOARD_DIMENSION; i++) {
             board[i][5] = -1;
         }
         GameSession session = new GameSession.GameSessionBuilder(ownerId, board)
@@ -70,7 +72,7 @@ public class DefaultEndGameRuleTests {
     @Test
     public void shouldEndGameWhenPrincipalDiagonalWinDetected() {
         UUID ownerId = UUID.randomUUID();
-        short[][] board = new short[10][10];
+        short[][] board = new short[BOARD_DIMENSION][BOARD_DIMENSION];
         for (int i = 0, j = 0; i < 5 && j < 5; i++, j++) {
             board[i][j] = 1;
         }
@@ -92,8 +94,8 @@ public class DefaultEndGameRuleTests {
     public void shouldEndGameWhenSecondaryDiagonalWinDetected() {
         UUID ownerId = UUID.randomUUID();
         UUID opponentId = UUID.randomUUID();
-        short[][] board = new short[10][10];
-        for (int i = 5, j = 4; i < 10 && j >= 0; i++, j--) {
+        short[][] board = new short[BOARD_DIMENSION][BOARD_DIMENSION];
+        for (int i = 5, j = 4; i < BOARD_DIMENSION && j >= 0; i++, j--) {
             board[i][j] = -1;
         }
         GameSession session = new GameSession.GameSessionBuilder(ownerId, board)
@@ -109,5 +111,27 @@ public class DefaultEndGameRuleTests {
         List<WinResult.Coords> winLine = IntStream.rangeClosed(5, 9)
                 .mapToObj(n -> new WinResult.Coords(n, 9 - n)).collect(toList());
         assertEquals(win.getSeq(), winLine);
+    }
+
+    @Test
+    public void shouldEndGameWhenDrawDetected() {
+        UUID ownerId = UUID.randomUUID();
+        UUID opponentId = UUID.randomUUID();
+        short[][] board = new short[BOARD_DIMENSION][BOARD_DIMENSION];
+        for (int i = 0; i < BOARD_DIMENSION; i++) {
+            board[i] = i % 2 == 0 ? new short[] {-1, -1, -1, -1, -1, 1, 1, 1, 1, 1} : new short[] {1, 1, 1, 1, 1, -1, -1, -1, -1, -1};
+        }
+        GameSession session = new GameSession.GameSessionBuilder(ownerId, board)
+                .withOpponentId(opponentId)
+                .withThreshold(10)
+                .withOwnerTurnCount(50)
+                .withOpponentTurnCount(50)
+                .build();
+        endGame.execute(session, opponentId, 9, 9);
+        assertTrue(session.isFinished());
+        WinResult win = session.getWin();
+        assertNull(win.getType());
+        assertEquals(win.getWho(), 0);
+        assertNull(win.getSeq());
     }
 }

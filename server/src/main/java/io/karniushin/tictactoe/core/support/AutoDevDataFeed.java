@@ -26,6 +26,7 @@ public class AutoDevDataFeed implements ApplicationListener<ContextRefreshedEven
         log.debug("Populating memory with game sessions...");
         fixtures.initialSetup();
         fixtures.initialSetupWithoutOpponent();
+        fixtures.lastTurnSetup();
         log.debug("Game sessions has been added to internal memory");
     }
 }

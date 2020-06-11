@@ -260,7 +260,10 @@ public class GameControllerTests {
                                                 .type(JsonFieldType.NUMBER),
                                         fieldWithPath("lastTurn")
                                                 .description("Timestamp in milliseconds when the last turn has been made")
-                                                .type(JsonFieldType.NUMBER)
+                                                .type(JsonFieldType.NUMBER),
+                                        fieldWithPath("winner")
+                                                .description("Winner of the game if it has been finished")
+                                                .type(JsonFieldType.STRING).optional()
                                 )
                         )
                 );

@@ -50,8 +50,12 @@ public class TicTacGameController {
     public List<GameSessionView> listGames() {
         List<GameSession> sessions = gameService.list();
         return sessions.stream().map(s -> {
+            String owner = playerRegistry.getNameById(s.getOwnerId());
             GameSessionView g = new GameSessionView(s.getId(), s.getName(), s.getStatus(), s.getThreshold(), s.getLastTurnDate());
-            g.setOwner(playerRegistry.getNameById(s.getOwnerId()));
+            g.setOwner(owner);
+            if (s.getWin() != null && s.getWin().getWho() != 0) {
+                g.setWinner(s.getWin().getWho() == 1 ? owner : playerRegistry.getNameById(s.getOpponentId()));
+            }
             return g;
         }).sorted(comparing(GameSessionView::getLastTurn)).collect(Collectors.toList());
     }

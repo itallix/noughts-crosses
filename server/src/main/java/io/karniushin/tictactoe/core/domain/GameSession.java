@@ -10,7 +10,7 @@ public class GameSession {
 
     private final UUID id;
 
-    private final String name;
+    private String name;
 
     private final short[][] board;
 
@@ -231,6 +231,11 @@ public class GameSession {
             return this;
         }
 
+        public GameSessionBuilder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
         public GameSession build() {
             GameSession session = new GameSession(ownerId, name, board);
             session.setOpponentId(opponentId);
@@ -240,6 +245,7 @@ public class GameSession {
             if (threshold != null) {
                 session.setThreshold(threshold);
             }
+            session.name = name;
             session.ownerTurnCount = ownerTurnCount;
             session.opponentTurnCount = opponentTurnCount;
             return session;
