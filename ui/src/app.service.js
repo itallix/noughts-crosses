@@ -23,3 +23,7 @@ export function makeTurn(gameId, playerId, row, col) {
 export function getGameState(gameId, playerId) {
     return instance.get(`/${API_BASE_URL}/${gameId}/${playerId}`).then(resp => resp.data);
 }
+
+export function getGameStatus(gameId) {
+    return instance.get(`/${API_BASE_URL}/${gameId}`).then(resp => resp.data);
+}

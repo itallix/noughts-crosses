@@ -1,6 +1,6 @@
 import {all, call, put, takeLatest} from 'redux-saga/effects';
-import {connectToGame, createNewGame, getGameState, listGameSessions, makeTurn} from '../app.service';
-import {boardLoaded, dashboardLoaded, gameConnect, gameCreate, gameList, gameSession, gameTurnRequested} from "./actions";
+import {connectToGame, createNewGame, getGameState, getGameStatus, listGameSessions, makeTurn} from '../app.service';
+import {boardLoaded, dashboardLoaded, gameConnect, gameCreate, gameList, gameSession, gameStatus, gameTurnRequested} from "./actions";
 import {push} from 'connected-react-router';
 import {connectDashboard, connectSession} from "./ws-saga";
 
@@ -62,6 +62,17 @@ export function* get({payload: {gameId, playerId}}) {
     }
 }
 
+export function* status({payload: {gameId}}) {
+    try {
+        const {ownerName, status} = yield call(getGameStatus, gameId);
+        yield put(gameStatus.succeeded({ownerName, status}));
+        console.log(`Successfully loaded game status of the session with id=${gameId}`);
+    } catch (e) {
+        console.warn(`Cannot get game status with gameId = ${gameId}`, e);
+        yield put(gameStatus.failed({msg: e.response.data, status: e.response.status}));
+    }
+}
+
 export default function* listSaga() {
     yield all([
         takeLatest([gameList.requested], list),
@@ -70,6 +81,7 @@ export default function* listSaga() {
         takeLatest([gameTurnRequested], turn),
         takeLatest([gameSession.requested], get),
         takeLatest([dashboardLoaded], connectDashboard),
-        takeLatest([boardLoaded], connectSession)
+        takeLatest([boardLoaded], connectSession),
+        takeLatest([gameStatus.requested], status)
     ]);
 }

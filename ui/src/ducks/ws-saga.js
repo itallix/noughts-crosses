@@ -8,6 +8,19 @@ let stompClient = null;
 let dashboardSubscription = null;
 let sessionSubscription = null;
 
+const channel = (subscribe) => eventChannel(emitter => {
+        if (stompClient !== null && stompClient.connected) {
+            subscribe(emitter);
+        } else {
+            stompClient = Stomp.over(new SockJS('/ws'));
+            stompClient.connect({}, () => subscribe(emitter));
+        }
+
+        return () => {
+            console.log('Session disconnected');
+        }
+    });
+
 function initSessionWs(gameId) {
     const subscribe = (emitter) => {
         sessionSubscription = stompClient.subscribe(`/topic/${gameId}`, e => {
@@ -18,18 +31,7 @@ function initSessionWs(gameId) {
         });
     };
 
-    return eventChannel(emitter => {
-        if (!stompClient || !stompClient.connected) {
-            stompClient = Stomp.over(new SockJS('/ws'));
-            stompClient.connect({}, () => subscribe(emitter));
-        } else {
-            subscribe(emitter);
-        }
-
-        return () => {
-            console.log('Session disconnected');
-        }
-    })
+    return channel(subscribe);
 }
 
 function initDashboardWs() {
@@ -42,20 +44,7 @@ function initDashboardWs() {
         });
     }
 
-    return eventChannel(emitter => {
-        if (!stompClient || !stompClient.connected) {
-            stompClient = Stomp.over(new SockJS('/ws'));
-            stompClient.connect({}, frame => {
-                console.log('Connected: ' + frame);
-                subscribe(emitter)
-            });
-        } else {
-            subscribe(emitter);
-        }
-        return () => {
-            console.log('Dashboard disconnected');
-        }
-    })
+    return channel(subscribe);
 }
 
 function* wsSessionSaga(gameId) {

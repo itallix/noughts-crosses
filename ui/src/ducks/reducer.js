@@ -1,6 +1,6 @@
 import {handleActions} from 'redux-actions';
 
-import {dashboardSync, gameConnect, gameCreate, gameList, gameSession, gameSessionSync} from "./actions";
+import {dashboardSync, gameConnect, gameCreate, gameList, gameSession, gameSessionSync, gameStatus} from "./actions";
 import {GameStatuses, WaitStatuses} from "../app.types";
 
 export const defaultState = {
@@ -69,6 +69,20 @@ const reducer = handleActions({
                 error: noError()
             }),
         [gameSession.failed]: (state, {payload: {msg, status}}) => ({...state, loading: false, error: {msg, status}}),
+
+        [gameStatus.requested]: state => ({...state, loading: true}),
+        [gameStatus.succeeded]: (state, {payload: {status, ownerName}}) => (
+            {
+                ...state,
+                session: {
+                    ...state.session,
+                    status, playerName: ownerName
+                },
+                loading: false,
+                error: noError()
+            }),
+        [gameStatus.failed]: (state, {payload: {msg, status}}) => ({...state, loading: false, error: {msg, status}}),
+
         // WS messages:
         [dashboardSync]: (state, {payload: {type, gameId, status, lastTurn, owner, threshold}}) => (type === 'UPDATED' ? {
                     ...state,

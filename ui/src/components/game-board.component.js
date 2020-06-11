@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import {Alert, Button, Col, Divider, Result, Row, Spin} from 'antd';
+import {Alert, Button, Col, Divider, Popover, Result, Row, Spin} from 'antd';
 import {CheckCircleOutlined, CloseOutlined} from '@ant-design/icons';
 import {Link} from 'react-router-dom';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 import {Error, GameStatuses, WinResult} from '../app.types';
 import "./game-board.component.scss";
@@ -14,8 +15,8 @@ export default class GameBoardComponent extends Component {
     static propTypes = {
         error: Error,
         loading: PropTypes.bool.isRequired,
-        gameId: PropTypes.any.isRequired,
-        playerId: PropTypes.any.isRequired,
+        gameId: PropTypes.string.isRequired,
+        playerId: PropTypes.string.isRequired,
         shouldWait: PropTypes.bool.isRequired,
         isOwner: PropTypes.bool.isRequired,
         onInit: PropTypes.func.isRequired,
@@ -38,11 +39,20 @@ export default class GameBoardComponent extends Component {
     renderWaitingBlock() {
         const {gameId, onRefresh, playerId, playerName} = this.props;
 
+        const url = window.location.href;
+
         return (<Result
             status="success"
             title={`Hi ${playerName}! You've just successfully created the new game`}
             subTitle={`Game id: ${gameId}. Please wait for opponent to join the game.`}
             extra={[
+                <CopyToClipboard text={url.substring(0, url.lastIndexOf("/"))}>
+                    <Popover trigger="click" content={<span>Game link copied!</span>}>
+                        <Button type="dashed" key="copy">
+                            Copy Link
+                        </Button>
+                    </Popover>
+                </CopyToClipboard>,
                 <Button type="primary" key="refresh" onClick={() => onRefresh(gameId, playerId)}>
                     Refresh
                 </Button>
@@ -144,13 +154,15 @@ export default class GameBoardComponent extends Component {
     renderError() {
         const {gameId, playerId, error, onRefresh} = this.props;
 
+        const dashboard = <Button key={`btn-dashboard-${new Date().getTime()}`} type="dashed"><Link to={"/"}>Dashboard</Link></Button>;
+
         const controls = () => ([
-            <Button key={`btn-dashboard-${new Date().getTime()}`} type="dashed"><Link to={"/"}>Dashboard</Link></Button>,
+            dashboard,
             <Button key={`btn-refresh-${new Date().getTime()}`} type="default" onClick={() => onRefresh(gameId, playerId)}>Try Again</Button>
         ]);
 
         return (<React.Fragment>
-            {error.status === 404 && render404(error.msg, controls())}
+            {error.status === 404 && render404(error.msg, [dashboard])}
             {error.status === 400 && render400(error.msg, controls())}
         </React.Fragment>)
     }
@@ -161,27 +173,29 @@ export default class GameBoardComponent extends Component {
         return <div className='game-board'>
             {error.status && this.renderError()}
             {!error.status && <Spin tip="Loading game data..." spinning={loading}>
-                <Alert message={`Hi ${playerName}!`} type="success"/>
-                {isWaiting(status) && this.renderWaitingBlock()}
-                {isFinished(status) && this.renderGameOver()}
-                {!isWaiting(status) && <React.Fragment>
-                    <Divider/>
-                    {isInProgress(status) && this.renderTurnHint()}
-                    <Spin tip="Waiting..." size="large" spinning={isInProgress(status) && shouldWait }>
-                        <div className='wrapper'>
-                            <Row gutter={[16, 16]}>
-                                <Col span={3}>
-                                    <img className='hero sc' alt={'Scorpion'} src={'/sc.png'}/>
-                                </Col>
-                                <Col span={18}>
-                                    {this.renderBoard()}
-                                </Col>
-                                <Col span={3} style={{marginLeft: '-30px'}}>
-                                    <img className='hero sz' alt={'Sub Zero'} src={'/sz.png'}/>
-                                </Col>
-                            </Row>
-                        </div>
-                    </Spin>
+                {status && <React.Fragment>
+                    <Alert message={`Hi ${playerName}!`} type="success"/>
+                    {isWaiting(status) && this.renderWaitingBlock()}
+                    {isFinished(status) && this.renderGameOver()}
+                    {!isWaiting(status) && <React.Fragment>
+                        <Divider/>
+                        {isInProgress(status) && this.renderTurnHint()}
+                        <Spin tip="Waiting..." size="large" spinning={isInProgress(status) && shouldWait}>
+                            <div className='wrapper'>
+                                <Row gutter={[16, 16]}>
+                                    <Col span={3}>
+                                        <img className='hero sc' alt={'Scorpion'} src={'/sc.png'}/>
+                                    </Col>
+                                    <Col span={18}>
+                                        {this.renderBoard()}
+                                    </Col>
+                                    <Col span={3} style={{marginLeft: '-30px'}}>
+                                        <img className='hero sz' alt={'Sub Zero'} src={'/sz.png'}/>
+                                    </Col>
+                                </Row>
+                            </div>
+                        </Spin>
+                    </React.Fragment>}
                 </React.Fragment>}
             </Spin>
             }
