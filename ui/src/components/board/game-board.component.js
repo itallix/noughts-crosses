@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
-import {Alert, Col, Divider, notification, Rate, Row, Spin} from 'antd';
+import {Alert, Col, Divider, Rate, Row, Spin} from 'antd';
 
 import {Error, GameStatuses, SessionInfo} from '../../app.types';
 import "./game-board.component.scss";
@@ -30,6 +30,7 @@ const GameBoardComponent = ({connected, error, loading, session, gameId, onRefre
         if (!error.status) {
             onInit(gameId, playerId);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gameId, playerId]);
 
     useEffect(() => {

@@ -11,6 +11,7 @@ import {isWaiting} from "../../app.utils";
 const GameConnectComponent = ({error, loading, gameId, gameName, onConnect, onInit, playerName, status, threshold}) => {
     useEffect(() => {
         onInit(gameId);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gameId]);
 
     const [valid, setValid] = useState(false);
