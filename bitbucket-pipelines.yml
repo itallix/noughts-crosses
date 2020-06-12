@@ -1,0 +1,26 @@
+image: openjdk:11
+
+pipelines:
+  default:
+    - step:
+        name: Build
+        caches:
+          - gradle
+        script:
+          - bash ./gradlew build
+    - step:
+        name: Create Artifact
+        script:
+          - git archive --format=tar.gz $BITBUCKET_BRANCH -o app.tar.gz
+        artifacts:
+          - app.tar.gz
+    - step:
+        name: Deploy to Heroku
+        script:
+          - pipe: atlassian/heroku-deploy:1.1.3
+            variables:
+              HEROKU_API_KEY: $HEROKU_API_KEY
+              HEROKU_APP_NAME: $HEROKU_APP_NAME
+              ZIP_FILE: 'app.tar.gz'
+              # WAIT: '<boolean>' # Optional.
+              # DEBUG: '<boolean>' # Optional
