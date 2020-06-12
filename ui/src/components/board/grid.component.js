@@ -27,7 +27,7 @@ Cell.propTypes = {
 
 const isWinningCell = (seq, r, c) => seq.find(p => p.x === r && p.y === c);
 const isWinner = (isOwner, value) => (isOwner && value === 1 || !isOwner && value === -1);
-const isLooser = (isOwner, value) => (isOwner && value === 1 || !isOwner && value === 1);
+const isLooser = (isOwner, value) => (isOwner && value === -1 || !isOwner && value === 1);
 const isClickable = (status, shouldWait, value) => isInProgress(status) && !shouldWait && value === 0;
 
 const Grid = ({connected, gameId, onTurn, playerId, session: {board, isOwner, status, shouldWait, win, x}}) => (<>
