@@ -324,7 +324,10 @@ public class GameControllerTests {
                                 .type(JsonFieldType.BOOLEAN),
                         fieldWithPath("gameName")
                                 .description("Name of the game")
-                                .type(JsonFieldType.STRING)
+                                .type(JsonFieldType.STRING),
+                        fieldWithPath("threshold")
+                                .description("How many symbols should be sequentially in line to win")
+                                .type(JsonFieldType.NUMBER)
                 )));
     }
 

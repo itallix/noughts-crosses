@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
-import {Alert, Col, Divider, Row, Spin} from 'antd';
+import {Alert, Col, Divider, Rate, Row, Spin} from 'antd';
 
 import {Error, GameStatuses, SessionInfo} from '../../app.types';
 import "./game-board.component.scss";
@@ -22,7 +22,8 @@ const intro = (gameName, status) => {
     }
 }
 
-const GameBoardComponent = ({error, loading, session, gameId, onRefresh, onTurn, onInit, playerId, session: {gameName, isOwner, playerName, shouldWait, status}}) => {
+const GameBoardComponent = ({error, loading, session, gameId, onRefresh, onTurn, onInit, playerId,
+                                session: {gameName, isOwner, playerName, shouldWait, status, threshold}}) => {
 
     useEffect(() => {
         if (!error.status) {
@@ -34,9 +35,17 @@ const GameBoardComponent = ({error, loading, session, gameId, onRefresh, onTurn,
         {error.status && <ErrorPanel status={error.status} msg={error.msg} onReload={() => onRefresh(gameId, playerId)}/>}
         {!error.status && <Spin tip="Loading game data..." spinning={loading}>
             {status && <>
-                {isWaiting(status) && <Wait gameId={gameId} gameName={gameName} playerId={playerId} playerName={playerName} onRefresh={onRefresh}/>}
+                {isWaiting(status) && <Wait gameId={gameId}
+                                            gameName={gameName}
+                                            onRefresh={onRefresh}
+                                            playerId={playerId}
+                                            playerName={playerName}
+                                            threshold={threshold}/>}
                 {!isWaiting(status) && <>
-                    <Alert message={`Hi ${playerName}! ${intro(gameName, status)}`} type="success"/>
+                    <>
+                        <Alert message={`Hi ${playerName}! ${intro(gameName, status)}`} type="success" />
+                        <Rate className='rate-threshold' count={10} defaultValue={threshold} disabled={true} />
+                    </>
                     <Divider/>
                     {isFinished(status) && <GameOver isOwner={isOwner} win={session.win}/>}
                     {isInProgress(status) && <TurnHint shouldWait={shouldWait} gameId={gameId} playerId={playerId} onRefresh={onRefresh}/>}

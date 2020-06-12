@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import {Button, Input, Result} from 'antd';
 import {UserOutlined} from '@ant-design/icons';
 
-const Invite = ({game, player, valid, onUsernameChange, onConnect}) => {
+const Invite = ({game, player, valid, onUsernameChange, onConnect, threshold}) => {
 
     return (<Result
-        title={`You have been invited to join the game [${game}]!`}
+        title={`You have been invited to join the game [${game}] with threshold ${threshold}!`}
         subTitle={`Please enter your name to start playing this game with ${player}`}
         extra={
             <Input
@@ -34,7 +34,8 @@ Invite.propTypes = {
     player: PropTypes.string.isRequired,
     valid: PropTypes.bool.isRequired,
     onUsernameChange: PropTypes.func.isRequired,
-    onConnect: PropTypes.func.isRequired
+    onConnect: PropTypes.func.isRequired,
+    threshold: PropTypes.number.isRequired
 }
 
 export default Invite;

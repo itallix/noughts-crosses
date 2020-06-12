@@ -13,9 +13,10 @@ public class GameStateView {
     private final boolean isOwner;
     private final String playerName;
     private final boolean x;
+    private final Integer threshold;
 
     public GameStateView(final String gameName, final short[][] board, final boolean shouldWait, final GameStatus status, final WinResult win,
-                         final boolean isOwner, final String playerName, final boolean x) {
+                         final boolean isOwner, final String playerName, final boolean x, final Integer threshold) {
         this.gameName = gameName;
         this.board = board;
         this.shouldWait = shouldWait;
@@ -24,6 +25,7 @@ public class GameStateView {
         this.isOwner = isOwner;
         this.playerName = playerName;
         this.x = x;
+        this.threshold = threshold;
     }
 
     public String getGameName() {
@@ -56,5 +58,9 @@ public class GameStateView {
 
     public boolean isX() {
         return x;
+    }
+
+    public Integer getThreshold() {
+        return threshold;
     }
 }

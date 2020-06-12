@@ -6,15 +6,16 @@ import {GameStatuses, WaitStatuses} from "../app.types";
 export const defaultState = {
     list: [],
     session: {
-        shouldWait: false,
-        isOwner: false,
         board: Array(10).fill(0).map(() => Array(10).fill(0)),
-        playerName: null,
-        status: null,
+        gameName: null,
+        isOwner: false,
         lastTurn: null,
+        playerName: null,
+        shouldWait: false,
+        status: null,
+        threshold: 5,
         win: null,
-        x: true,
-        gameName: null
+        x: true
     },
     loading: false,
     error: {
@@ -59,12 +60,12 @@ const reducer = handleActions({
         [gameConnect.failed]: (state, {payload: {msg, status}}) => ({...state, loading: false, error: {msg, status}}),
 
         [gameSession.requested]: state => ({...state, loading: true}),
-        [gameSession.succeeded]: (state, {payload: {board, gameName, status, shouldWait, win, owner, playerName, x}}) => (
+        [gameSession.succeeded]: (state, {payload: {board, gameName, status, shouldWait, threshold, win, owner, playerName, x}}) => (
             {
                 ...state,
                 session: {
                     ...state.session,
-                    board, status, win, shouldWait, isOwner: owner, playerName, gameName, x
+                    board, status, win, shouldWait, isOwner: owner, playerName, gameName, x, threshold
                 },
                 loading: false,
                 error: noError()
@@ -72,12 +73,12 @@ const reducer = handleActions({
         [gameSession.failed]: (state, {payload: {msg, status}}) => ({...state, loading: false, error: {msg, status}}),
 
         [gameStatus.requested]: state => ({...state, loading: true}),
-        [gameStatus.succeeded]: (state, {payload: {status, ownerName, gameName}}) => (
+        [gameStatus.succeeded]: (state, {payload: {status, ownerName, gameName, threshold}}) => (
             {
                 ...state,
                 session: {
                     ...state.session,
-                    status, playerName: ownerName, gameName
+                    status, playerName: ownerName, gameName, threshold
                 },
                 loading: false,
                 error: noError()

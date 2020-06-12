@@ -4,9 +4,9 @@ import {gameConnect, gameStatus} from "../ducks/actions";
 
 const mapStateToProps = state => {
     const {error, loading} = state.ticTacReducer;
-    const {gameName, playerName, status} = state.ticTacReducer.session;
+    const {gameName, playerName, status, threshold} = state.ticTacReducer.session;
     return {
-        error, gameName, loading, playerName, status
+        error, gameName, loading, playerName, status, threshold
     };
 };
 

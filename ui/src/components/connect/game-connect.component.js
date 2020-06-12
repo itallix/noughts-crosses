@@ -8,7 +8,7 @@ import ErrorPanel from "../error-panel.component";
 import Invite from "./invite.component";
 import {isWaiting} from "../../app.utils";
 
-const GameConnectComponent = ({error, loading, gameId, gameName, onConnect, onInit, playerName, status}) => {
+const GameConnectComponent = ({error, loading, gameId, gameName, onConnect, onInit, playerName, status, threshold}) => {
     useEffect(() => {
         onInit(gameId);
     }, [gameId]);
@@ -32,6 +32,7 @@ const GameConnectComponent = ({error, loading, gameId, gameName, onConnect, onIn
                             setValid(username.length > 0 && username !== playerName);
                             setUsername(username);
                         }}
+                        threshold={threshold}
                 />}
                 {!isWaiting(status) && <Result
                     title={titles[status] || "You cannot join the game with unknown status"}
@@ -51,7 +52,8 @@ GameConnectComponent.propTypes = {
     gameName: PropTypes.string,
     status: PropTypes.oneOf(Object.values(GameStatuses)),
     onConnect: PropTypes.func.isRequired,
-    onInit: PropTypes.func.isRequired
+    onInit: PropTypes.func.isRequired,
+    threshold: PropTypes.number.isRequired
 };
 
 export default GameConnectComponent;

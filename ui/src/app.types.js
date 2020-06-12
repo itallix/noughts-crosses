@@ -43,6 +43,7 @@ export const SessionInfo = PropTypes.shape({
     playerName: PropTypes.string,
     shouldWait: PropTypes.bool.isRequired,
     status: PropTypes.oneOf(Object.values(GameStatuses)),
+    threshold: PropTypes.number.isRequired,
     win: WinResult,
     x: PropTypes.bool.isRequired
 })

@@ -66,13 +66,13 @@ public class TicTacGameController {
         boolean isOwner = session.isOwner(playerId);
         return new GameStateView(
             session.getName(), session.getBoard(), !session.canMakeTurn(playerId), session.getStatus(), session.getWin(), isOwner,
-                playerRegistry.getNameById(playerId), isOwner == session.isOwnerX()
+                playerRegistry.getNameById(playerId), isOwner == session.isOwnerX(), session.getThreshold()
         );
     }
 
     @GetMapping("/{gameId}")
     public GameStatusView status(@PathVariable UUID gameId) {
         GameSession session = gameService.getGame(gameId);
-        return new GameStatusView(playerRegistry.getNameById(session.getOwnerId()), session.getName(), session.getStatus());
+        return new GameStatusView(playerRegistry.getNameById(session.getOwnerId()), session.getName(), session.getStatus(), session.getThreshold());
     }
 }
