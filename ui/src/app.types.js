@@ -34,3 +34,15 @@ export const Error = PropTypes.shape({
     msg: PropTypes.string,
     status: PropTypes.number
 });
+
+export const SessionInfo = PropTypes.shape({
+    board: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number.isRequired).isRequired),
+    gameName: PropTypes.string,
+    isOwner: PropTypes.bool.isRequired,
+    lastTurn: PropTypes.number,
+    playerName: PropTypes.string,
+    shouldWait: PropTypes.bool.isRequired,
+    status: PropTypes.oneOf(Object.values(GameStatuses)),
+    win: WinResult,
+    x: PropTypes.bool.isRequired
+})

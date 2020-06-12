@@ -1,5 +1,5 @@
 import {connect} from 'react-redux';
-import GameListComponent from '../components/game-list.component';
+import GameListComponent from '../components/dashboard/game-list.component';
 import {dashboardLoaded, gameConnect, gameCreate, gameList} from "../ducks/actions";
 
 const mapStateToProps = state => {

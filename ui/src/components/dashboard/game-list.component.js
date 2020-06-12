@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {Avatar, Badge, Button, Divider, Drawer, Form, Input, InputNumber, List, Modal, Popover, Skeleton, Switch, Tag, Tooltip} from 'antd';
-import {ClockCircleOutlined, MinusCircleOutlined, PlusOutlined, QuestionCircleOutlined, ReloadOutlined, SyncOutlined, UserOutlined} from '@ant-design/icons';
+import {Avatar, Badge, Button, Divider, Drawer, Form, Input, InputNumber, List, Modal, Popover, Skeleton, Switch, Tooltip} from 'antd';
+import {PlusOutlined, QuestionCircleOutlined, ReloadOutlined, UserOutlined} from '@ant-design/icons';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
-import {Error, GameSession, GameStatuses} from '../app.types';
-import {isWaiting, render400, render500} from '../app.utils';
+import {Error, GameSession, GameStatuses} from '../../app.types';
+import {isWaiting} from '../../app.utils';
 import "./game-list.component.scss";
+import ErrorPanel from "./../error-panel.component";
+import StatusTag from "./status-tag.component";
 
 const getDescriptionByStatus = status => {
     switch (status) {
@@ -111,17 +113,6 @@ export default class GameListComponent extends Component {
         });
     };
 
-    renderError() {
-        const {error, onReload} = this.props;
-
-        const tryAgainBtn = <Button type="primary" onClick={onReload}>Try Again</Button>;
-
-        return (<React.Fragment>
-            {error.status === 400 && render400(error.msg, tryAgainBtn)}
-            {error.status === 500 && render500(error.msg, tryAgainBtn)}
-        </React.Fragment>)
-    }
-
     renderDrawer() {
         const {gameName, username, threshold, symbol} = this.state.form;
 
@@ -219,35 +210,6 @@ export default class GameListComponent extends Component {
         )
     }
 
-    renderTagByStatus(status) {
-        switch (status) {
-            case GameStatuses.WAITING:
-                return (
-                    <Tag icon={<ClockCircleOutlined/>} color="success">
-                        waiting
-                    </Tag>
-                );
-            case GameStatuses.ACTIVE:
-                return (
-                    <Tag icon={<SyncOutlined spin/>} color="processing">
-                        in progress
-                    </Tag>
-                );
-            case GameStatuses.FINISHED:
-                return (
-                    <Tag icon={<MinusCircleOutlined/>} color="default">
-                        finished
-                    </Tag>
-                );
-            default:
-                return (
-                    <Tag icon={<MinusCircleOutlined/>} color="error">
-                        undefined
-                    </Tag>
-                );
-        }
-    }
-
     render() {
         const {error, list, loading, onReload} = this.props;
 
@@ -267,7 +229,7 @@ export default class GameListComponent extends Component {
         return (
             <React.Fragment>
                 {this.renderDrawer()}
-                {error.status && this.renderError()}
+                {error.status && <ErrorPanel status={error.status} msg={error.msg} onReload={onReload} />}
                 {!error.status && <React.Fragment>
                     <Button type="primary" onClick={this.showDrawer}>
                         <PlusOutlined/> New game
@@ -290,7 +252,7 @@ export default class GameListComponent extends Component {
                                   const title = <React.Fragment>
                                       {item.gameName}
                                       <Divider type="vertical"/>
-                                      {this.renderTagByStatus(item.status)}
+                                      <StatusTag status={item.status} />
                                   </React.Fragment>;
 
                                   return (

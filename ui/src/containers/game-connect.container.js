@@ -1,12 +1,12 @@
 import {connect} from 'react-redux';
-import GameConnectComponent from '../components/game-connect.component';
+import GameConnectComponent from '../components/connect/game-connect.component';
 import {gameConnect, gameStatus} from "../ducks/actions";
 
 const mapStateToProps = state => {
-    const {error} = state.ticTacReducer;
+    const {error, loading} = state.ticTacReducer;
     const {gameName, playerName, status} = state.ticTacReducer.session;
     return {
-        error, gameName, playerName, status
+        error, gameName, loading, playerName, status
     };
 };
 

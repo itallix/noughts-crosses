@@ -1,12 +1,11 @@
 import {connect} from 'react-redux';
-import GameBoardComponent from '../components/game-board.component';
+import GameBoardComponent from '../components/board/game-board.component';
 import {gameTurnRequested, gameSession, boardLoaded} from "../ducks/actions";
 
 const mapStateToProps = state => {
-    const { error, loading } = state.ticTacReducer;
-    const { gameName, isOwner, shouldWait, board, playerName, status, win, x } = state.ticTacReducer.session;
+    const { error, loading, session } = state.ticTacReducer;
     return {
-        error, loading, gameName, isOwner, shouldWait, board, playerName, status, win, x
+        error, loading, session
     };
 };
 

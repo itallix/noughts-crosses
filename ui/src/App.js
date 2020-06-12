@@ -12,8 +12,8 @@ import './App.scss';
 const App = () => <ConnectedRouter history={history}>
     <Switch>
         <Route exact path="/" component={Dashboard} />
+        <Route exact path="/:gameId" render={props => <GameConnect {...props.match.params}/>}/>
         <Route path="/:gameId/:playerId" render={props => <GameBoard {...props.match.params} />}/>
-        <Route path="/:gameId" render={props => <GameConnect {...props.match.params}/>}/>
     </Switch>
 </ConnectedRouter>;
 
