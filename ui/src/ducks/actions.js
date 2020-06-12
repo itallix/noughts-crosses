@@ -1,6 +1,6 @@
 import { createActions } from 'redux-actions';
 
-export const {gameList, gameCreate, gameConnect, gameSession, gameTurnRequested, dashboardSync, dashboardLoaded, gameSessionSync, boardLoaded, gameStatus} =
+export const {gameList, gameCreate, gameConnect, gameSession, gameTurnRequested, dashboardSync, dashboardLoaded, gameSessionSync, boardLoaded, gameStatus, wsConnection} =
     createActions({
     'GAME_LIST': {
         'REQUESTED': undefined,
@@ -31,5 +31,9 @@ export const {gameList, gameCreate, gameConnect, gameSession, gameTurnRequested,
     'DASHBOARD_SYNC': undefined,
     'DASHBOARD_LOADED': undefined,
     'GAME_SESSION_SYNC': undefined,
-    'BOARD_LOADED': undefined
+    'BOARD_LOADED': undefined,
+    'WS_CONNECTION': {
+        'SUCCEEDED': undefined,
+        'FAILED': undefined,
+    }
 });

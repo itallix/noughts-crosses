@@ -8,7 +8,7 @@ public class ViewController {
 
     private static final String UUID_RE = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
 
-    @RequestMapping(value = "/{gameId:" + UUID_RE + "}/{playerId:" + UUID_RE + "}")
+    @RequestMapping(value = {"/{gameId:" + UUID_RE + "}", "/{gameId:" + UUID_RE + "}/{playerId:" + UUID_RE + "}"})
     public String index() {
         return "forward:/";
     }

@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
-import {Alert, Col, Divider, Rate, Row, Spin} from 'antd';
+import {Alert, Col, Divider, notification, Rate, Row, Spin} from 'antd';
 
 import {Error, GameStatuses, SessionInfo} from '../../app.types';
 import "./game-board.component.scss";
@@ -10,6 +10,7 @@ import GameOver from "./game-over.component";
 import TurnHint from "./turn-hint.component";
 import Grid from "./grid.component";
 import Wait from "./wait.component";
+import notify from "../notification";
 
 const intro = (gameName, status) => {
     switch (status) {
@@ -22,7 +23,7 @@ const intro = (gameName, status) => {
     }
 }
 
-const GameBoardComponent = ({error, loading, session, gameId, onRefresh, onTurn, onInit, playerId,
+const GameBoardComponent = ({connected, error, loading, session, gameId, onRefresh, onTurn, onInit, playerId,
                                 session: {gameName, isOwner, playerName, shouldWait, status, threshold}}) => {
 
     useEffect(() => {
@@ -30,6 +31,10 @@ const GameBoardComponent = ({error, loading, session, gameId, onRefresh, onTurn,
             onInit(gameId, playerId);
         }
     }, [gameId, playerId]);
+
+    useEffect(() => {
+        notify(connected);
+    }, [connected]);
 
     return <div className='game-board'>
         {error.status && <ErrorPanel status={error.status} msg={error.msg} onReload={() => onRefresh(gameId, playerId)}/>}
@@ -56,7 +61,8 @@ const GameBoardComponent = ({error, loading, session, gameId, onRefresh, onTurn,
                                     <img className='hero sc' alt={'Scorpion'} src={'/sc.png'}/>
                                 </Col>
                                 <Col span={18}>
-                                    <Grid playerId={playerId}
+                                    <Grid connected={connected}
+                                          playerId={playerId}
                                           gameId={gameId}
                                           onTurn={onTurn}
                                           session={session}/>
@@ -75,6 +81,7 @@ const GameBoardComponent = ({error, loading, session, gameId, onRefresh, onTurn,
 }
 
 GameBoardComponent.propTypes = {
+    connected: PropTypes.bool,
     error: Error,
     gameId: PropTypes.string.isRequired,
     loading: PropTypes.bool.isRequired,

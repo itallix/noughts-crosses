@@ -9,6 +9,7 @@ import {isWaiting} from '../../app.utils';
 import "./game-list.component.scss";
 import ErrorPanel from "./../error-panel.component";
 import StatusTag from "./status-tag.component";
+import notify from "../notification";
 
 const getDescriptionByStatus = status => {
     switch (status) {
@@ -26,6 +27,7 @@ const getDescriptionByStatus = status => {
 export default class GameListComponent extends Component {
 
     static propTypes = {
+        connected: PropTypes.bool,
         error: Error,
         list: PropTypes.arrayOf(GameSession),
         loading: PropTypes.bool.isRequired,
@@ -208,6 +210,13 @@ export default class GameListComponent extends Component {
                        }}/>
             </Modal>
         )
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const {connected} = this.props;
+        if (connected !== prevProps.connected) {
+            notify(connected);
+        }
     }
 
     render() {

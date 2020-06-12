@@ -3,8 +3,9 @@ import GameListComponent from '../components/dashboard/game-list.component';
 import {dashboardLoaded, gameConnect, gameCreate, gameList} from "../ducks/actions";
 
 const mapStateToProps = state => {
-    const {list, error, loading} = state.ticTacReducer;
+    const {connected, list, error, loading} = state.ticTacReducer;
     return {
+        connected,
         list,
         error,
         loading

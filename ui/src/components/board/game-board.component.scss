@@ -26,33 +26,6 @@
     .ant-col {
       background: transparent;
       border: 0;
-      .cell {
-        height: 70px;
-        font-size: 14px;
-        line-height: 120px;
-        border-radius: 4px;
-        background: #0092ff;
-        display: flex;
-        &.active {
-          cursor: pointer;
-        }
-        &.winner {
-          border: 4px solid darkgreen;
-        }
-        &.looser {
-          border: 4px solid darkred;
-        }
-        .owner, .opponent {
-          font-size: 50px;
-          margin: auto;
-        }
-        .owner {
-          color: yellowgreen;
-        }
-        .opponent {
-          color: darkred;
-        }
-      }
       .hero {
         position: relative;
         width: 300px;

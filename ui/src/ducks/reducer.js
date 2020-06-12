@@ -1,10 +1,16 @@
 import {handleActions} from 'redux-actions';
 
-import {dashboardSync, gameConnect, gameCreate, gameList, gameSession, gameSessionSync, gameStatus} from "./actions";
+import {dashboardSync, gameConnect, gameCreate, gameList, gameSession, gameSessionSync, gameStatus, wsConnection} from "./actions";
 import {GameStatuses, WaitStatuses} from "../app.types";
 
 export const defaultState = {
+    connected: undefined,
+    error: {
+        msg: null,
+        status: null
+    },
     list: [],
+    loading: false,
     session: {
         board: Array(10).fill(0).map(() => Array(10).fill(0)),
         gameName: null,
@@ -16,11 +22,6 @@ export const defaultState = {
         threshold: 5,
         win: null,
         x: true
-    },
-    loading: false,
-    error: {
-        msg: null,
-        status: null
     }
 };
 
@@ -103,7 +104,9 @@ const reducer = handleActions({
                         || wait === WaitStatuses.OPPONENT && !state.session.isOwner
                 }
             }
-        )
+        ),
+        [wsConnection.succeeded]: (state) => ({...state, connected: true}),
+        [wsConnection.failed]: (state) => ({...state, connected: false})
     },
     defaultState
 );

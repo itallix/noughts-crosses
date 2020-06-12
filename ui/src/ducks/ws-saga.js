@@ -1,6 +1,6 @@
 import {eventChannel} from 'redux-saga';
 import {call, put, take} from 'redux-saga/effects';
-import {dashboardSync, gameSessionSync} from "./actions";
+import {dashboardSync, gameSessionSync, wsConnection} from "./actions";
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 
@@ -13,7 +13,12 @@ const channel = (subscribe) => eventChannel(emitter => {
             subscribe(emitter);
         } else {
             stompClient = Stomp.over(new SockJS('/ws'));
-            stompClient.connect({}, () => subscribe(emitter));
+            stompClient.connect({}, () => {
+                emitter(wsConnection.succeeded());
+                return subscribe(emitter);
+            }, () => {
+                emitter(wsConnection.failed());
+            });
         }
 
         return () => {

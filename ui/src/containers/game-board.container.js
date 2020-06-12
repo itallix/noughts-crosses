@@ -3,9 +3,9 @@ import GameBoardComponent from '../components/board/game-board.component';
 import {gameTurnRequested, gameSession, boardLoaded} from "../ducks/actions";
 
 const mapStateToProps = state => {
-    const { error, loading, session } = state.ticTacReducer;
+    const {connected, error, loading, session} = state.ticTacReducer;
     return {
-        error, loading, session
+        connected, error, loading, session
     };
 };
 
