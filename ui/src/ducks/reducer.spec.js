@@ -19,15 +19,21 @@ describe('TicTacToe reducer', () => {
         expect(state).toMatchObject({
             list: data,
             loading: false,
-            error: false
+            error: {
+                status: null,
+                msg: null
+            }
         });
     });
 
     test('should set error when gameList failed', () => {
-        const state = reducer(initialState, gameList.failed());
+        const state = reducer(initialState, gameList.failed({status: 404, msg: 'Not Found'}));
         expect(state).toMatchObject({
             loading: false,
-            error: true
+            error: {
+                status: 404,
+                msg: 'Not Found'
+            }
         });
     });
 
@@ -43,9 +49,12 @@ describe('TicTacToe reducer', () => {
     });
 
     test('should set error when gameCreate failed', () => {
-        const state = reducer(initialState, gameCreate.failed());
+        const state = reducer(initialState, gameCreate.failed({status: 404, msg: 'Not Found'}));
         expect(state).toMatchObject({
-            error: true
+            error: {
+                status: 404,
+                msg: 'Not Found'
+            }
         });
     });
 
@@ -61,9 +70,12 @@ describe('TicTacToe reducer', () => {
     });
 
     test('should set error when gameConnect failed', () => {
-        const state = reducer(initialState, gameConnect.failed());
+        const state = reducer(initialState, gameConnect.failed({status: 404, msg: 'Not Found'}));
         expect(state).toMatchObject({
-            error: true
+            error: {
+                status: 404,
+                msg: 'Not Found'
+            }
         });
     });
 
@@ -98,9 +110,12 @@ describe('TicTacToe reducer', () => {
     });
 
     test('should set error when gameSession failed', () => {
-        const state = reducer(initialState, gameSession.failed());
+        const state = reducer(initialState, gameSession.failed({status: 404, msg: 'Not Found'}));
         expect(state).toMatchObject({
-            error: true
+            error: {
+                status: 404,
+                msg: 'Not Found'
+            }
         });
     });
 
@@ -118,7 +133,10 @@ describe('TicTacToe reducer', () => {
                 gameId: 'uuid2', owner: 'Sebastian', status: GameStatuses.ACTIVE
             }],
             loading: false,
-            error: false
+            error: {
+                msg: null,
+                status: null
+            }
         });
 
         state = reducer({...initialState, list: data}, dashboardSync({
@@ -133,7 +151,10 @@ describe('TicTacToe reducer', () => {
                 gameId: 'uuid3', owner: 'Christina', status: GameStatuses.FINISHED
             }],
             loading: false,
-            error: false
+            error: {
+                msg: null,
+                status: null
+            }
         });
     });
 
