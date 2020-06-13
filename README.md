@@ -17,7 +17,7 @@ Or run script `./run.sh`
 ## Tech Stack
 
 ### Backend
- * JDK 8.x
+ * JDK 11.x
  * Spring Boot 2.1.6
  * Gradle 5.4.1
  * JUnit, Mockito, Spring RestDocs MockMvc
@@ -30,6 +30,8 @@ Or run script `./run.sh`
  * antd
 
 Follow the [documentation](./rest-api-docs/index.html) for the REST apis semantics.
+
+Deployed to Heroku with Bitbucket pipeline. Access heroku app: http://jb-cross.herokuapp.com/ 
 
 [noughts-crosses-travis-image]: https://travis-ci.com/itallix/noughts-crosses.svg?token=VccNzTqqao1HL7VwvVz1&branch=master
 [noughts-crosses-travis-url]: https://travis-ci.com/github/itallix/noughts-crosses
