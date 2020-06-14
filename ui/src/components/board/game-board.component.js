@@ -10,7 +10,7 @@ import GameOver from "./game-over.component";
 import TurnHint from "./turn-hint.component";
 import Grid from "./grid.component";
 import Wait from "./wait.component";
-import notify from "../notification";
+import {useMessage} from "../effects";
 
 const intro = (gameName, status) => {
     switch (status) {
@@ -33,12 +33,10 @@ const GameBoardComponent = ({connected, error, loading, session, gameId, onRefre
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gameId, playerId]);
 
-    useEffect(() => {
-        notify(connected);
-    }, [connected]);
+    useMessage(connected);
 
     return <div className='game-board'>
-        {error.status && <ErrorPanel status={error.status} msg={error.msg} onReload={() => onRefresh(gameId, playerId)}/>}
+        <ErrorPanel status={error.status} msg={error.msg} onReload={() => onRefresh(gameId, playerId)}/>
         {!error.status && <Spin tip="Loading game data..." spinning={loading}>
             {status && <>
                 {isWaiting(status) && <Wait gameId={gameId}

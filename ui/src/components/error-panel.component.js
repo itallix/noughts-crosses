@@ -18,6 +18,10 @@ export const render500 = (errorMsg, buttons) => renderResultWithError("500", "50
 export const render404 = (errorMsg, buttons) => renderResultWithError("404", "404", errorMsg, buttons)
 
 const ErrorPanel = ({status, msg, onReload}) => {
+    if (!status) {
+        return null;
+    }
+
     const buttons = [
         <Button key={`btn-dashboard-${new Date().getTime()}`} type="dashed"><Link to={"/"}>Dashboard</Link></Button>,
         <Button key={`btn-refresh-${new Date().getTime()}`} type="default" onClick={onReload}>Try Again</Button>

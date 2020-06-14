@@ -3,31 +3,28 @@ import PropTypes from 'prop-types';
 import {Button, Input, Result} from 'antd';
 import {UserOutlined} from '@ant-design/icons';
 
-const Invite = ({game, player, valid, onUsernameChange, onConnect, threshold}) => {
-
-    return (<Result
-        title={`You have been invited to join the game [${game}] with threshold ${threshold}!`}
-        subTitle={`Please enter your name to start playing this game with ${player}`}
-        extra={
-            <Input
-                style={{width: '45%'}}
-                placeholder="Enter your username"
-                onChange={e => onUsernameChange(e.target.value)}
-                onPressEnter={() => {
-                    if (valid) {
-                        onConnect();
-                    }
-                }}
-                prefix={<UserOutlined className="site-form-item-icon"/>}
-                suffix={
-                    <Button type="primary" key="console" disabled={!valid} onClick={onConnect}>
-                        Join
-                    </Button>
+const Invite = ({game, player, valid, onUsernameChange, onConnect, threshold}) => (<Result
+    title={`You have been invited to join the game [${game}] with threshold ${threshold}!`}
+    subTitle={`Please enter your name to start playing this game with ${player}`}
+    extra={
+        <Input
+            style={{width: '45%'}}
+            placeholder="Enter your username"
+            onChange={e => onUsernameChange(e.target.value)}
+            onPressEnter={() => {
+                if (valid) {
+                    onConnect();
                 }
-            />
-        }
-    />)
-}
+            }}
+            prefix={<UserOutlined className="site-form-item-icon"/>}
+            suffix={
+                <Button type="primary" key="console" disabled={!valid} onClick={onConnect}>
+                    Join
+                </Button>
+            }
+        />
+    }
+/>)
 
 Invite.propTypes = {
     game: PropTypes.string.isRequired,

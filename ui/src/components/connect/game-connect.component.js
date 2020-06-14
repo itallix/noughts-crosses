@@ -24,7 +24,7 @@ const GameConnectComponent = ({error, loading, gameId, gameName, onConnect, onIn
 
     return <Spin tip="Loading..." spinning={loading}>
         {!loading && <>
-            {error.status && <ErrorPanel status={error.status} msg={error.msg} onReload={() => onInit(gameId)}/>}
+            <ErrorPanel status={error.status} msg={error.msg} onReload={() => onInit(gameId)}/>
             {!error.status && status && <>
                 {isWaiting(status) &&
                 <Invite valid={valid} game={gameName} player={playerName}

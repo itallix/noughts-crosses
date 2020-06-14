@@ -6,10 +6,10 @@ import {PlusOutlined, ReloadOutlined} from '@ant-design/icons';
 import {Error, GameSession} from '../../app.types';
 import "./game-list.component.scss";
 import ErrorPanel from "./../error-panel.component";
-import notify from "../notification";
 import CreateGameDrawer from "./create-game-drawer";
 import ConnectGameModal from "./connect-game-modal";
 import GameListItem from "./game-list-item";
+import {useMessage} from "../effects";
 
 const GameListComponent = ({connected, error, list, loading, onConnect, onCreate, onInit, onReload}) => {
 
@@ -22,9 +22,7 @@ const GameListComponent = ({connected, error, list, loading, onConnect, onCreate
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    useEffect(() => {
-        notify(connected);
-    }, [connected]);
+    useMessage(connected);
 
     const listHeader = <div className='header'>
         List of all games
@@ -47,7 +45,7 @@ const GameListComponent = ({connected, error, list, loading, onConnect, onCreate
             <CreateGameDrawer onCreate={onCreate} visible={create} onHide={() => {
                 setCreate(false)
             }}/>
-            {error.status && <ErrorPanel status={error.status} msg={error.msg} onReload={onReload}/>}
+            <ErrorPanel status={error.status} msg={error.msg} onReload={onReload}/>
             {!error.status && <>
                 <Button type="primary" onClick={() => setCreate(true)}>
                     <PlusOutlined/> New game
