@@ -22,10 +22,10 @@ const GameConnectComponent = ({error, loading, gameId, gameName, onConnect, onIn
         [GameStatuses.ACTIVE]: "You cannot join the game that's being in progress"
     };
 
-    return <Spin tip="Loading..." spinning={loading}>
-        {!loading && <>
-            <ErrorPanel status={error.status} msg={error.msg} onReload={() => onInit(gameId)}/>
-            {!error.status && status && <>
+    return <>
+        <ErrorPanel status={error.status} msg={error.msg} onReload={() => onInit(gameId)}/>
+        <Spin size="large" spinning={loading}>
+            {status && <>
                 {isWaiting(status) &&
                 <Invite valid={valid} game={gameName} player={playerName}
                         onConnect={() => onConnect(gameId, username)}
@@ -42,8 +42,8 @@ const GameConnectComponent = ({error, loading, gameId, gameName, onConnect, onIn
                     }
                 />}
             </>}
-        </>}
-    </Spin>
+        </Spin>
+    </>
 }
 
 GameConnectComponent.propTypes = {

@@ -1,8 +1,18 @@
-# TicTacToe Game 10x10 with configurable win threshold
+# Noughts & Crosses aka TicTacToe Game 10x10 with configurable win threshold
 
 [![Build Status][noughts-crosses-travis-image] ][noughts-crosses-travis-url]
 [![Codacy][noughts-crosses-codacy-image] ][noughts-crosses-codacy-url]
 [![License: MIT][noughts-crosses-license-image] ][noughts-crosses-license-url]
+
+## Attention
+
+There is an opinion that you shouldn't write code like that. 
+Company X gave a feedback that this code is over-engineered and hard to follow. 
+Please note that CSS was not a goal for this project.
+Requirements:
+- field 10x10
+- players can make a turn at the same time, but single player cannot make a series of turns if another one didn't
+- realtime dashboard
 
 ## Run project
 
