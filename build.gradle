@@ -1,0 +1,13 @@
+plugins {
+	id 'idea'
+}
+
+allprojects {
+	group = 'io.karniushin.tictactoe'
+	version = '0.0.1-SNAPSHOT'
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}

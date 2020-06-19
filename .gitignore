@@ -1,0 +1,22 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+node_modules/
+coverage/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+
+# Mac
+.DS_Store
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

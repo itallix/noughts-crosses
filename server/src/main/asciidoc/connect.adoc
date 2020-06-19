@@ -1,0 +1,26 @@
+= Connect to the game
+
+Any user can connect to the game. As a result he will be added as a user with a unique id into the User Registry and
+registered as an opponent in a specified game.
+
+To connect to the game, send this request:
+
+include::{snippets}/connect/http-request.adoc[]
+include::{snippets}/connect/curl-request.adoc[]
+include::{snippets}/connect/httpie-request.adoc[]
+
+You will receive a response:
+
+include::{snippets}/connect/http-response.adoc[]
+
+Response fields explained:
+
+include::{snippets}/connect/response-fields.adoc[]
+
+If the requested game doesn't exist:
+
+include::{snippets}/connect/doesNotExist/http-response.adoc[]
+
+If an opponent has been already registered:
+
+include::{snippets}/connect/opponentRegistered/http-response.adoc[]

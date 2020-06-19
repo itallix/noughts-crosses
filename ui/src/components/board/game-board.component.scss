@@ -1,0 +1,41 @@
+.game-board {
+
+  .refresh-btn, .dashboard-btn {
+    position: absolute;
+    top: 110px;
+  }
+
+  .dashboard-btn {
+    right: 35px;
+  }
+
+  .refresh-btn {
+    right: 150px;
+  }
+
+  .rate-threshold {
+    position: absolute;
+    right: 5px;
+    top: 2px;
+  }
+
+  .wrapper {
+    width: 1240px;
+    margin: 40px auto;
+
+    .ant-col {
+      background: transparent;
+      border: 0;
+      .hero {
+        position: relative;
+        width: 300px;
+        &.sc {
+          left: -149px;
+        }
+        &.sz {
+          left: -135px;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+= TicTacToe Game App REST API
+
+These are the public REST services exposed by the TicTacToe Game App server.
+
+You can access the REST API via a URL of the form `http://localhost:8080/api/v1/tictac`.
+
+For example:
+
+`POST http://localhost:8081/api/v1/tictac/create`
+`{'username': 'Daniel', 'threshold': 5, 'x': true}`
+
+`PUT http://localhost:8081/api/v1/tictac/ec9b87f6-54d7-4e89-bb7a-7406f7069d3d/connect/Robert`
+
+`PUT http://localhost:8081/api/v1/tictac/turn`
+`{'gameId': 'ec9b87f6-54d7-4e89-bb7a-7406f7069d3d', 'playerId': 'b42dd3f2-1ff1-4367-ae30-97a2e514c213', 'x': 3, 'y': 4}`
+
+== Authentication
+
+All resources do not require any authentication.
+
+== Error codes
+
+include::errors.adoc[Error codes]
+
+:leveloffset: +1
+
+include::load.adoc[How to load games]
+include::new.adoc[See how to create a game]
+include::connect.adoc[See how to connect to the game]
+include::turn.adoc[How to make a turn]
+
+:leveloffset: -1

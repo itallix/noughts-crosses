@@ -1,0 +1,29 @@
+= Turn
+
+As soon as you connect to the game you can make a turn.
+
+To make a turn in the game, send this request:
+
+include::{snippets}/turn/http-request.adoc[]
+include::{snippets}/turn/curl-request.adoc[]
+include::{snippets}/turn/httpie-request.adoc[]
+
+You will receive a response with 200 status if everything is OK:
+
+include::{snippets}/turn/http-response.adoc[]
+
+If cell coordinates not in range:
+
+include::{snippets}/turn/notInRange/http-response.adoc[]
+
+If cell coordinates already occupied:
+
+include::{snippets}/turn/busy/http-response.adoc[]
+
+If another player should make a turn:
+
+include::{snippets}/turn/anotherPlayer/http-response.adoc[]
+
+If player not registered in this game:
+
+include::{snippets}/turn/nonRegistered/http-response.adoc[]
